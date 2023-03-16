@@ -58,6 +58,7 @@
             // 
             // treeViewElemType
             // 
+            treeViewElemType.CheckBoxes = true;
             treeViewElemType.Location = new Point(12, 40);
             treeViewElemType.Name = "treeViewElemType";
             treeViewElemType.Size = new Size(300, 225);
@@ -65,6 +66,7 @@
             // 
             // treeViewChannel
             // 
+            treeViewChannel.CheckBoxes = true;
             treeViewChannel.Location = new Point(12, 305);
             treeViewChannel.Name = "treeViewChannel";
             treeViewChannel.Size = new Size(300, 225);
@@ -72,6 +74,7 @@
             // 
             // treeViewDatabase
             // 
+            treeViewDatabase.CheckBoxes = true;
             treeViewDatabase.Location = new Point(12, 569);
             treeViewDatabase.Name = "treeViewDatabase";
             treeViewDatabase.Size = new Size(300, 225);
@@ -190,7 +193,8 @@
             Controls.Add(treeViewElemType);
             Controls.Add(textBoxElemType);
             Name = "FormElementSearch";
-            Text = "Form1";
+            Text = "Element Search";
+            Load += FormElementSearch_Load;
             ResumeLayout(false);
             PerformLayout();
         }
