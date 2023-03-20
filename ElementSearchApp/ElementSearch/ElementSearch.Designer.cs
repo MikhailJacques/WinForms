@@ -33,13 +33,13 @@
             treeViewChannel = new TreeView();
             treeViewDatabase = new TreeView();
             listViewElements = new ListView();
+            columnHeaderID = new ColumnHeader();
             columnHeaderLongName = new ColumnHeader();
             columnHeaderShortName = new ColumnHeader();
             columnHeaderElemType = new ColumnHeader();
             columnHeaderChannel = new ColumnHeader();
             columnHeaderDatabase = new ColumnHeader();
             columnHeaderLocation = new ColumnHeader();
-            columnHeaderID = new ColumnHeader();
             columnHeaderHandle = new ColumnHeader();
             buttonSearch = new Button();
             labelElemType = new Label();
@@ -63,6 +63,7 @@
             treeViewElemType.Name = "treeViewElemType";
             treeViewElemType.Size = new Size(300, 225);
             treeViewElemType.TabIndex = 1;
+            treeViewElemType.AfterCheck += treeViewElemType_AfterCheck;
             // 
             // treeViewChannel
             // 
@@ -71,6 +72,7 @@
             treeViewChannel.Name = "treeViewChannel";
             treeViewChannel.Size = new Size(300, 225);
             treeViewChannel.TabIndex = 3;
+            treeViewChannel.AfterCheck += treeViewChannel_AfterCheck;
             // 
             // treeViewDatabase
             // 
@@ -79,48 +81,57 @@
             treeViewDatabase.Name = "treeViewDatabase";
             treeViewDatabase.Size = new Size(300, 225);
             treeViewDatabase.TabIndex = 5;
+            treeViewDatabase.AfterCheck += treeViewDatabase_AfterCheck;
             // 
             // listViewElements
             // 
             listViewElements.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            listViewElements.Columns.AddRange(new ColumnHeader[] { columnHeaderLongName, columnHeaderShortName, columnHeaderElemType, columnHeaderChannel, columnHeaderDatabase, columnHeaderLocation, columnHeaderID, columnHeaderHandle });
+            listViewElements.Columns.AddRange(new ColumnHeader[] { columnHeaderID, columnHeaderLongName, columnHeaderShortName, columnHeaderElemType, columnHeaderChannel, columnHeaderDatabase, columnHeaderLocation, columnHeaderHandle });
             listViewElements.Location = new Point(325, 40);
             listViewElements.Name = "listViewElements";
-            listViewElements.Size = new Size(910, 754);
+            listViewElements.Size = new Size(985, 754);
             listViewElements.TabIndex = 6;
             listViewElements.UseCompatibleStateImageBehavior = false;
+            listViewElements.View = View.Details;
+            // 
+            // columnHeaderID
+            // 
+            columnHeaderID.Text = "ID";
+            columnHeaderID.Width = 40;
             // 
             // columnHeaderLongName
             // 
             columnHeaderLongName.Text = "Long Name";
+            columnHeaderLongName.Width = 200;
             // 
             // columnHeaderShortName
             // 
             columnHeaderShortName.Text = "Short Name";
+            columnHeaderShortName.Width = 100;
             // 
             // columnHeaderElemType
             // 
             columnHeaderElemType.Text = "Elem Type";
+            columnHeaderElemType.Width = 100;
             // 
             // columnHeaderChannel
             // 
             columnHeaderChannel.Text = "Channel";
+            columnHeaderChannel.Width = 200;
             // 
             // columnHeaderDatabase
             // 
             columnHeaderDatabase.Text = "Database";
+            columnHeaderDatabase.Width = 200;
             // 
             // columnHeaderLocation
             // 
             columnHeaderLocation.Text = "Location";
             // 
-            // columnHeaderID
-            // 
-            columnHeaderID.Text = "ID";
-            // 
             // columnHeaderHandle
             // 
             columnHeaderHandle.Text = "Handle";
+            columnHeaderHandle.Width = 80;
             // 
             // buttonSearch
             // 
@@ -180,7 +191,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1247, 803);
+            ClientSize = new Size(1322, 804);
             Controls.Add(labelDatabase);
             Controls.Add(textBoxDatabase);
             Controls.Add(labelChannel);
@@ -220,5 +231,7 @@
         private ColumnHeader columnHeaderLocation;
         private ColumnHeader columnHeaderID;
         private ColumnHeader columnHeaderHandle;
+
+        private List<TreeView> treeViewList = new List<TreeView>(3);
     }
 }
