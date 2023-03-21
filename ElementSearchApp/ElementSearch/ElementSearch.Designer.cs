@@ -47,6 +47,7 @@
             textBoxChannel = new TextBox();
             labelDatabase = new Label();
             textBoxDatabase = new TextBox();
+            buttonClear = new Button();
             SuspendLayout();
             // 
             // textBoxElemType
@@ -142,6 +143,7 @@
             buttonSearch.TabIndex = 7;
             buttonSearch.Text = "Search";
             buttonSearch.UseVisualStyleBackColor = true;
+            buttonSearch.Click += buttonSearch_Click;
             // 
             // labelElemType
             // 
@@ -187,11 +189,23 @@
             textBoxDatabase.Size = new Size(231, 23);
             textBoxDatabase.TabIndex = 11;
             // 
+            // buttonClear
+            // 
+            buttonClear.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            buttonClear.Location = new Point(420, 11);
+            buttonClear.Name = "buttonClear";
+            buttonClear.Size = new Size(89, 24);
+            buttonClear.TabIndex = 13;
+            buttonClear.Text = "Clear";
+            buttonClear.UseVisualStyleBackColor = true;
+            buttonClear.Click += buttonClear_Click;
+            // 
             // FormElementSearch
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1322, 804);
+            Controls.Add(buttonClear);
             Controls.Add(labelDatabase);
             Controls.Add(textBoxDatabase);
             Controls.Add(labelChannel);
@@ -218,6 +232,7 @@
         private TreeView treeViewDatabase;
         private ListView listViewElements;
         private Button buttonSearch;
+        private Button buttonClear;
         private Label labelElemType;
         private Label labelChannel;
         private TextBox textBoxChannel;
@@ -233,5 +248,6 @@
         private ColumnHeader columnHeaderHandle;
 
         private List<TreeView> treeViewList = new List<TreeView>(3);
+        
     }
 }
