@@ -48,6 +48,7 @@
             labelDatabase = new Label();
             textBoxDatabase = new TextBox();
             buttonClear = new Button();
+            buttonSend = new Button();
             SuspendLayout();
             // 
             // textBoxElemType
@@ -56,6 +57,7 @@
             textBoxElemType.Name = "textBoxElemType";
             textBoxElemType.Size = new Size(231, 23);
             textBoxElemType.TabIndex = 0;
+            textBoxElemType.KeyDown += TextBoxElemType_KeyDown;
             // 
             // treeViewElemType
             // 
@@ -88,6 +90,7 @@
             // 
             listViewElements.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             listViewElements.Columns.AddRange(new ColumnHeader[] { columnHeaderID, columnHeaderLongName, columnHeaderShortName, columnHeaderElemType, columnHeaderChannel, columnHeaderDatabase, columnHeaderLocation, columnHeaderHandle });
+            listViewElements.FullRowSelect = true;
             listViewElements.Location = new Point(325, 40);
             listViewElements.Name = "listViewElements";
             listViewElements.Size = new Size(985, 754);
@@ -171,6 +174,7 @@
             textBoxChannel.Name = "textBoxChannel";
             textBoxChannel.Size = new Size(231, 23);
             textBoxChannel.TabIndex = 9;
+            textBoxChannel.KeyDown += TextBoxChannel_KeyDown;
             // 
             // labelDatabase
             // 
@@ -188,6 +192,7 @@
             textBoxDatabase.Name = "textBoxDatabase";
             textBoxDatabase.Size = new Size(231, 23);
             textBoxDatabase.TabIndex = 11;
+            textBoxDatabase.KeyDown += TextBoxDatabase_KeyDown;
             // 
             // buttonClear
             // 
@@ -200,11 +205,23 @@
             buttonClear.UseVisualStyleBackColor = true;
             buttonClear.Click += buttonClear_Click;
             // 
+            // buttonSend
+            // 
+            buttonSend.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            buttonSend.Location = new Point(515, 11);
+            buttonSend.Name = "buttonSend";
+            buttonSend.Size = new Size(89, 24);
+            buttonSend.TabIndex = 14;
+            buttonSend.Text = "Send";
+            buttonSend.UseVisualStyleBackColor = true;
+            buttonSend.Click += buttonSend_Click;
+            // 
             // FormElementSearch
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1322, 804);
+            Controls.Add(buttonSend);
             Controls.Add(buttonClear);
             Controls.Add(labelDatabase);
             Controls.Add(textBoxDatabase);
@@ -248,6 +265,6 @@
         private ColumnHeader columnHeaderHandle;
 
         private List<TreeView> treeViewList = new List<TreeView>(3);
-        
+        private Button buttonSend;
     }
 }

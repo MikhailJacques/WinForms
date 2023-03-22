@@ -1,677 +1,248 @@
-﻿//using System;
+﻿//using ElementSearch;
+//using Microsoft.VisualBasic.Logging;
+//using System;
 //using System.Collections.Generic;
+//using System.Diagnostics.Metrics;
 //using System.IO;
 //using System.Linq;
+//using System.Threading;
 //using System.Threading.Tasks;
 //using System.Windows.Forms;
 
 //namespace ElementSearch
 //{
-//    public partial class MainForm : Form
+//    public partial class FormElementSearch : Form
 //    {
-//        public MainForm()
+//        public FormElementSearch()
 //        {
 //            InitializeComponent();
 //        }
 
-//        private async void MainForm_Load(object sender, EventArgs e)
+//        private Dictionary<uint, string> _elementTypeById = new Dictionary<uint, string>();
+//        private Dictionary<uint, string> _channelById = new Dictionary<uint, string>();
+//        private Dictionary<uint, string> _databaseById = new Dictionary<uint, string>();
+//        private Dictionary<uint, ElementData> _elementDataById = new Dictionary<uint, ElementData>();
+
+//        private async void FormElementSearch_Load(object sender, EventArgs e)
 //        {
-//            string[] filePaths = {
-//                "logs\\_lst_LogData_elm.cvs",
-//                "logs\\_lst_LogData_chn.cvs",
-//                "logs\\_lst_LogData_dbs.cvs"
+//            // This will assign the FullName of the grandparent directory if available, and if not,
+//            // it will use the current directory as the project directory. 
+//            string projectDirectory = Directory.GetParent(Environment.CurrentDirectory)?.Parent?.Parent?.FullName ?? Environment.CurrentDirectory;
+
+//            string elmentTypeFilePath = Path.Combine(projectDirectory, "data", "_lst_LogData_elm_type.txt");
+//            string channelFilePath = Path.Combine(projectDirectory, "data", "_lst_LogData_chn.txt");
+//            string databaseFilePath = Path.Combine(projectDirectory, "data", "_lst_LogData_dbs.txt");
+//            string elementDataFilePath = Path.Combine(projectDirectory, "data", "_lst_LogData_elm_all.txt");
+
+//            string[] filesPaths = { elmentTypeFilePath, channelFilePath, databaseFilePath, elementDataFilePath };
+
+//            var fileTokens = filesPaths.Select(ReadTextFile).ToArray();
+
+//            var fillTreeViewTasks = new[]
+//            {
+//                FillTreeView(treeViewElemType, fileTokens[0]),
+//                FillTreeView(treeViewChannel, fileTokens[1]),
+//                FillTreeView(treeViewDatabase, fileTokens[2])
 //            };
 
-//            List<List<List<string>>> fileTokens = new List<List<List<string>>>(3);
+//            await Task.WhenAll(fillTreeViewTasks);
 
-//            for (int i = 0; i < filePaths.Length; i++)
+//            // Fill element data dictionary
+//            foreach (var lineTokens in fileTokens[3])
 //            {
-//                fileTokens.Add(await ReadTextFileAsync(filePaths[i]));
+//                if (lineTokens.Count < 8)
+//                    continue;
+
+//                uint.TryParse(lineTokens[0], out uint id);
+//                uint.TryParse(lineTokens[7], out uint handle);
+
+//                _elementDataById[id] = new ElementData
+//                {
+//                    ID = id,
+//                    LongName = lineTokens[1],
+//                    ShortName = lineTokens[2],
+//                    ElementType = lineTokens[3],
+//                    Channel = lineTokens[4],
+//                    Database = lineTokens[5],
+//                    Location = lineTokens[6],
+//                    Handle = handle
+//                };
 //            }
 
-//            FillTreeView(treeViewElement, fileTokens[0]);
-//            FillTreeView(treeViewChannel, fileTokens[1]);
-//            FillTreeView(treeViewDatabase, fileTokens[2]);
+//            // Fill dictionaries for element types, channels, and databases
+//            FillDictionaries(_elementTypeById, fileTokens[0]);
+//            FillDictionaries(_channelById, fileTokens[1]);
+//            FillDictionaries(_databaseById, fileTokens[2]);
 //        }
 
-//        private async Task<List<List<string>>> ReadTextFileAsync(string filePath)
+//        private void FillDictionaries(Dictionary<uint, string> dict, List<List<string>> fileTokens)
 //        {
-//            using (StreamReader reader = new StreamReader(filePath))
+//            foreach (var lineTokens in fileTokens)
 //            {
-//                List<List<string>> fileTokens = new List<List<string>>();
-//                string line;
+//                if (lineTokens.Count < 3)
+//                    continue;
 
-//                while ((line = await reader.ReadLineAsync()) != null)
-//                {
-//                    string[] tokens = line.Split('@');
-//                    fileTokens.Add(tokens.ToList());
-//                }
-
-//                return fileTokens;
+//                uint.TryParse(lineTokens[0], out uint id);
+//                dict[id] = lineTokens[1];
 //            }
 //        }
 
-//        private void FillTreeView(TreeView treeView, List<List<string>> fileTokens)
+//        private List<List<string>> ReadTextFile(string filePath)
 //        {
-//            treeView.BeginUpdate();
-//            treeView.Nodes.Clear();
+//            var fileTokens = new List<List<string>>();
 
-//            foreach (List<string> lineTokens in fileTokens)
+//            using (var reader = new StreamReader(filePath))
 //            {
-//                if (!string.IsNullOrWhiteSpace(lineTokens[0]))
+//                string? line;
+//                while ((line = reader.ReadLine()) != null)
 //                {
-//                    string[] hierarchy = lineTokens[0].Split('/');
-//                    int id = int.Parse(lineTokens[1]);
-//                    int handle = int.Parse(lineTokens[2]);
-
-//                    List<MyTreeNode> family = hierarchy.Select(relative => new MyTreeNode(relative, id, handle)).ToList();
-//                    AddNode(treeView.Nodes, family, 0);
-//                }
-//            }
-
-//            treeView.EndUpdate();
-//            treeView.AfterCheck += TreeView_AfterCheck;
-//        }
-
-//        private void AddNode(TreeNodeCollection nodes, List<MyTreeNode> family, int index)
-//        {
-//            MyTreeNode current = family[index];
-//            MyTreeNode node = null;
-
-//            foreach (MyTreeNode child in nodes)
-//            {
-//                if (child.Text == current.Text)
-//                {
-//                    node = child;
-//                    break;
+//                    var tokens = line.Split('@').Where(token => !string.IsNullOrEmpty(token)).ToList();
+//                    fileTokens.Add(tokens);
 //                }
 //            }
 
+//            return fileTokens;
+//        }
+
+//        private async Task FillTreeView(TreeView treeView, List<List<string>> fileTokens)
+//        {
+//            await Task.Run(() =>
+//            {
+//                var nodeLookup = new Dictionary<string, MyTreeNode>();
+
+//                foreach (var lineTokens in fileTokens)
+//                {
+//                    if (lineTokens.Count < 3)
+//                        continue;
+
+//                    uint.TryParse(lineTokens[0], out uint id);
+//                    string family_hierarhy = lineTokens[1];
+//                    uint.TryParse(lineTokens[2], out uint handle);
+
+//                    var relatives = family_hierarhy.Split('/').Select(relative => new MyTreeNode(relative, id, handle)).ToList();
+
+//                    treeView.Invoke(new Action(() =>
+//                    {
+//                        AddNode(treeView.Nodes, relatives, 0, nodeLookup);
+//                    }));
+//                }
+//            });
+//        }
+
+//        private void AddNode(TreeNodeCollection nodes, List<MyTreeNode> family, int index, Dictionary<string, MyTreeNode> nodeLookup)
+//        {
+//            if (index < family.Count)
+//            {
+//                var currentRelative = family[index];
+//                var currentNodeKey = currentRelative.Text;
+
+//                if (!nodeLookup.TryGetValue(currentNodeKey, out MyTreeNode currentNode))
+//                {
+//                    currentNode = currentRelative;
+//                    nodes.Add(currentNode);
+//                    nodeLookup[currentNodeKey] = currentNode;
+//                }
+
+//                AddNode(currentNode.Nodes, family, index + 1, nodeLookup);
+//            }
+//        }
+
+//        private void UpdateChildNodes(MyTreeNode node, bool isChecked)
+//        {
+//            foreach (MyTreeNode child in node.Nodes)
+//            {
+//                child.Checked = isChecked;
+//                UpdateChildNodes(child, isChecked);
+//            }
+//        }
+
+//        private void UpdateParentNode(MyTreeNode? node)
+//        {
 //            if (node == null)
 //            {
-//                node = new MyTreeNode(current.Text, current.Id, current.Handle);
-//                nodes.Add(node);
+//                return;
 //            }
 
-//            if (index < family.Count - 1)
+//            bool anyChecked = node.Nodes.Cast<TreeNode>().Any(childNode => childNode.Checked);
+
+//            if (node.Checked != anyChecked)
 //            {
-//                AddNode(node.Nodes, family, index + 1);
+//                node.Checked = anyChecked;
+//                UpdateParentNode(node.Parent as MyTreeNode);
 //            }
 //        }
 
-//        private void Tree
-
-
-//private async void FormElementSearch_Load(object sender, EventArgs e)
-//{
-//    var fileTokens = new List<List<List<string>>>
-//            {
-//                new List<List<string>>(8),
-//                new List<List<string>>(2000),
-//                new List<List<string>>(950)
-//            };
-
-//    string[] filesPaths = { "logs\\_lst_LogData_elm.cvs", "logs\\_lst_LogData_chn.cvs", "logs\\_lst_LogData_dbs.cvs" };
-
-//    await Task.WhenAll(
-//        ReadTextFile(filesPaths[0], fileTokens[0]),
-//        ReadTextFile(filesPaths[1], fileTokens[1]),
-//        ReadTextFile(filesPaths[2], fileTokens[2])
-//    );
-
-//    FillTreeView(treeViewElemType, fileTokens[0]);
-//    FillTreeView(treeViewChannel, fileTokens[1]);
-//    FillTreeView(treeViewDatabase, fileTokens[2]);
-//}
-
-//private async Task ReadTextFile(string filePath, List<List<string>> fileTokens)
-//{
-//    using var reader = new StreamReader(filePath);
-//    string line;
-
-//    while ((line = await reader.ReadLineAsync()) != null)
-//    {
-//        var tokens = line.Split('@').Where(token => !string.IsNullOrEmpty(token)).ToList();
-//        fileTokens.Add(tokens);
-//    }
-//}
-
-//private void FillTreeView(TreeView treeView, List<List<string>> fileTokens)
-//{
-//    treeView.BeginUpdate();
-//    treeView.Nodes.Clear();
-
-//    foreach (var lineTokens in fileTokens)
-//    {
-//        if (lineTokens.Count < 3)
-//            continue;
-
-//        string hierarchy = lineTokens[0];
-//        uint.TryParse(lineTokens[1], out uint id);
-//        uint.TryParse(lineTokens[2], out uint handle);
-
-//        var relatives = hierarchy.Split('/').Select(relative => new MyTreeNode(relative, id, handle)).ToList();
-
-//        AddNode(treeView.Nodes, relatives, 0);
-//    }
-
-//    treeView.EndUpdate();
-//}
-
-
-//// This method reads each text file and populates the respective TreeView control
-//private async Task LoadTreeViewFromFileAsync(TreeView treeView, string filePath)
-//{
-//    try
-//    {
-//        using (StreamReader sr = new StreamReader(filePath))
+//        private void treeViewElemType_AfterCheck(object sender, TreeViewEventArgs e)
 //        {
-//            string line;
+//            HandleTreeViewAfterCheck(sender, e);
 
-//            while ((line = await sr.ReadLineAsync()) != null)
+//            UpdateListView();
+//        }
+
+//        private void treeViewChannel_AfterCheck(object sender, TreeViewEventArgs e)
+//        {
+//            HandleTreeViewAfterCheck(sender, e);
+
+//            UpdateListView();
+//        }
+
+//        private void treeViewDatabase_AfterCheck(object sender, TreeViewEventArgs e)
+//        {
+//            HandleTreeViewAfterCheck(sender, e);
+
+//            UpdateListView();
+//        }
+
+//        private void HandleTreeViewAfterCheck(object? sender, TreeViewEventArgs e)
+//        {
+//            if (e.Action == TreeViewAction.Unknown)
 //            {
-//                string[] parts = line.Split(',');
+//                return;
+//            }
 
-//                TreeNode parentNode = new TreeNode(parts[0]);
-//                treeView.Nodes.Add(parentNode);
+//            var node = e.Node as MyTreeNode;
 
-//                for (int i = 1; i < parts.Length; i++)
+//            if (node != null)
+//            {
+//                UpdateChildNodes(node, node.Checked);
+//            }
+
+//            if (sender == null)
+//            {
+//                return;
+//            }
+
+//            TreeView treeView = (TreeView)sender;
+//            treeView.AfterCheck -= HandleTreeViewAfterCheck;
+
+//            if (node != null && node.Parent != null)
+//            {
+//                UpdateParentNode(node.Parent as MyTreeNode);
+//            }
+
+//            treeView.AfterCheck += HandleTreeViewAfterCheck;
+//        }
+
+//        private IEnumerable<TreeNode> GetCheckedNodes(TreeNodeCollection nodes)
+//        {
+//            List<TreeNode> checkedNodes = new List<TreeNode>();
+
+//            foreach (TreeNode node in nodes)
+//            {
+//                if (node.Checked && node.Nodes.Count == 0)
 //                {
-//                    TreeNode childNode = new TreeNode(parts[i]);
-//                    parentNode.Nodes.Add(childNode);
+//                    TreeNode fullPathNode = new TreeNode(node.FullPath);
+//                    fullPathNode.Tag = node; // Store the original node in the Tag property
+//                    checkedNodes.Add(fullPathNode);
 //                }
+
+//                checkedNodes.AddRange(GetCheckedNodes(node.Nodes));
 //            }
-//        }
-//    }
-//    catch (Exception ex)
-//    {
-//        MessageBox.Show($"Error loading TreeView: {ex.Message}");
-//    }
-//}
 
-//private async void FormElementSearch_Load3(object sender, EventArgs e)
-//{
-//    var fileTokens = new List<List<List<string>>>
-//            {
-//                new List<List<string>>(8),
-//                new List<List<string>>(2000),
-//                new List<List<string>>(950)
-//            };
-
-//    string[] filesPaths = { "logs\\_lst_LogData_elm.cvs", "logs\\_lst_LogData_chn.cvs", "logs\\_lst_LogData_dbs.cvs" };
-
-//    var readTasks = new List<Task>
-//            {
-//                ReadTextFile(filesPaths[0], fileTokens[0]),
-//                ReadTextFile(filesPaths[1], fileTokens[1]),
-//                ReadTextFile(filesPaths[2], fileTokens[2]),
-//            };
-
-//    var fillTasks = readTasks.Select((task, index) => task.ContinueWith(_ => FillTreeView3(treeViewList[index], fileTokens[index]))).ToList();
-
-//    treeViewList.Add(treeViewElemType);
-//    treeViewList.Add(treeViewChannel);
-//    treeViewList.Add(treeViewDatabase);
-
-//    await Task.WhenAll(fillTasks);
-//}
-
-//using ElementSearch;
-
-//private void AddNode2(TreeNodeCollection nodes, List<MyTreeNode> family, int index)
-//{
-//    var current = family[index];
-
-//    MyTreeNode node = null;
-
-//    foreach (MyTreeNode child in nodes)
-//    {
-//        if (child.Text == current.Text)
-//        {
-//            node = child;
-//            break;
-//        }
-//    }
-
-//    if (node == null)
-//    {
-//        node = new MyTreeNode(current.Text, current.m_ID, current.m_Handle);
-//        nodes.Add(node);
-//    }
-
-//    if (index < family.Count - 1)
-//    {
-//        AddNode2(node.Nodes, family, index + 1);
-//    }
-//}
-
-//using ElementSearch;
-
-//private async void FormElementSearch_Load(object sender, EventArgs e)
-//{
-//    var fileTokens = new List<List<List<string>>>
-//            {
-//                new List<List<string>>(8),
-//                new List<List<string>>(2000),
-//                new List<List<string>>(950)
-//            };
-
-//    string[] filesPaths = { "logs\\_lst_LogData_elm.cvs", "logs\\_lst_LogData_chn.cvs", "logs\\_lst_LogData_dbs.cvs" };
-
-//    await Task.WhenAll(
-//        ReadTextFile(filesPaths[0], fileTokens[0]),
-//        ReadTextFile(filesPaths[1], fileTokens[1]),
-//        ReadTextFile(filesPaths[2], fileTokens[2])
-//    );
-
-//    FillTreeView(treeViewElemType, fileTokens[0]);
-//    FillTreeView(treeViewChannel, fileTokens[1]);
-//    FillTreeView(treeViewDatabase, fileTokens[2]);
-//}
-
-//private async Task ReadTextFile(string filePath, List<List<string>> fileTokens)
-//{
-//    using var reader = new StreamReader(filePath);
-//    string line;
-
-//    while ((line = await reader.ReadLineAsync()) != null)
-//    {
-//        var tokens = line.Split('@').Where(token => !string.IsNullOrEmpty(token)).ToList();
-//        fileTokens.Add(tokens);
-//    }
-//}
-
-//private void FillTreeView(TreeView treeView, List<List<string>> fileTokens)
-//{
-//    treeView.BeginUpdate();
-//    treeView.Nodes.Clear();
-
-//    foreach (var lineTokens in fileTokens)
-//    {
-//        if (lineTokens.Count < 3)
-//            continue;
-
-//        string hierarchy = lineTokens[0];
-//        uint.TryParse(lineTokens[1], out uint id);
-//        uint.TryParse(lineTokens[2], out uint handle);
-
-//        var relatives = hierarchy.Split('/').Select(relative => new MyTreeNode(relative, id, handle)).ToList();
-
-//        AddNode(treeView.Nodes, relatives, 0);
-//    }
-
-//    treeView.EndUpdate();
-//}
-
-//private async void FormElementSearch_Load2(object sender, EventArgs e)
-//{
-//    var fileTokens = new List<List<List<string>>>
-//    {
-//        new List<List<string>>(8),
-//        new List<List<string>>(2000),
-//        new List<List<string>>(950)
-//    };
-
-//    string[] filesPaths = { "logs\\_lst_LogData_elm.cvs", "logs\\_lst_LogData_chn.cvs", "logs\\_lst_LogData_dbs.cvs" };
-
-//    var readTasks = new List<Task>
-//    {
-//        ReadTextFile2(filesPaths[0], fileTokens[0]),
-//        ReadTextFile2(filesPaths[1], fileTokens[1]),
-//        ReadTextFile2(filesPaths[2], fileTokens[2]),
-//    };
-
-//    var fillTasks = readTasks.Select((task, index) => task.ContinueWith(_ => Task.Run(() => FillTreeView2(treeViewList[index], fileTokens[index])))).ToList();
-
-//    treeViewList.Add(treeViewElemType);
-//    treeViewList.Add(treeViewChannel);
-//    treeViewList.Add(treeViewDatabase);
-
-//    await Task.WhenAll(fillTasks);
-//}
-
-//private async Task ReadTextFile2(string filePath, List<List<string>> fileTokens)
-//{
-//    using var reader = new StreamReader(filePath);
-//    string line;
-
-//    while ((line = await reader.ReadLineAsync()) != null)
-//    {
-//        var tokens = line.Split('@').Where(token => !string.IsNullOrEmpty(token)).ToList();
-//        fileTokens.Add(tokens);
-//    }
-//}
-
-//private void FillTreeView2(TreeView treeView, List<List<string>> fileTokens)
-//{
-//    treeView.BeginUpdate();
-//    treeView.Nodes.Clear();
-
-//    foreach (var lineTokens in fileTokens)
-//    {
-//        if (lineTokens.Count < 3)
-//            continue;
-
-//        string hierarchy = lineTokens[0];
-//        uint.TryParse(lineTokens[1], out uint id);
-//        uint.TryParse(lineTokens[2], out uint handle);
-
-//        var relatives = hierarchy.Split('/').Select(relative => new MyTreeNode(relative, id, handle)).ToList();
-
-//        AddNode(treeView.Nodes, relatives, 0);
-//    }
-
-//    treeView.EndUpdate();
-//}
-
-//private void FormElementSearch_Load(object sender, EventArgs e);
-//private List<List<string>> ReadTextFile(string filePath);
-//private void FillTreeView(TreeView treeView, IReadOnlyList<List<string>> fileTokens);
-//private void AddNode(TreeNodeCollection nodes, List<MyTreeNode> family, int index);
-
-//private async void FormElementSearch_Load2(object sender, EventArgs e);
-//private async Task ReadTextFile2(string filePath, List<List<string>> fileTokens);
-//private void FillTreeView2(TreeView treeView, List<List<string>> fileTokens);
-//private void AddNode(TreeNodeCollection nodes, List<MyTreeNode> family, int index);
-
-
-//private void FormElementSearch_Load(object sender, EventArgs e)
-//{
-//    var fileTokens = new List<List<List<string>>>
-//    {
-//        new List<List<string>>(8),
-//        new List<List<string>>(2000),
-//        new List<List<string>>(950)
-//    };
-
-//    var filesPaths = new List<string>
-//    {
-//        "logs\\_lst_LogData_elm.cvs",
-//        "logs\\_lst_LogData_chn.cvs",
-//        "logs\\_lst_LogData_dbs.cvs"
-//    };
-
-//    var tasks = filesPaths.Select((filePath, i) => Task.Run(() =>
-//    {
-//        fileTokens[i] = ReadTextFile(filePath);
-//    })).ToArray();
-
-//    Task.WhenAll(tasks).ContinueWith(_ =>
-//    {
-//        FillTreeView(treeViewElemType, fileTokens[0]);
-//        FillTreeView(treeViewChannel, fileTokens[1]);
-//        FillTreeView(treeViewDatabase, fileTokens[2]);
-//    }, TaskScheduler.FromCurrentSynchronizationContext());
-//}
-
-//private List<List<string>> ReadTextFile(string filePath)
-//{
-//    var fileTokens = new List<List<string>>();
-//    using (var infile = new StreamReader(filePath))
-//    {
-//        string line;
-//        while ((line = infile.ReadLine()) != null)
-//        {
-//            var lineTokens = line.Split('@').ToList();
-//            fileTokens.Add(lineTokens);
-//        }
-//    }
-
-//    return fileTokens;
-//}
-
-//private void FillTreeView(TreeView treeView, IReadOnlyList<List<string>> fileTokens)
-//{
-//    treeView.BeginUpdate();
-//    treeView.Nodes.Clear();
-
-//    foreach (var lineTokens in fileTokens)
-//    {
-//        if (string.IsNullOrEmpty(lineTokens[0]))
-//            continue;
-
-//        var id = string.IsNullOrEmpty(lineTokens[1]) ? 0 : uint.Parse(lineTokens[1]);
-//        var handle = string.IsNullOrEmpty(lineTokens[2]) ? 0 : uint.Parse(lineTokens[2]);
-//        var family = lineTokens[0].Split('/').Select(relative => new MyTreeNode(relative, id, handle)).ToList();
-
-//        AddNode(treeView.Nodes, family, 0);
-//    }
-
-//    treeView.EndUpdate();
-//}
-
-//private void AddNode(TreeNodeCollection nodes, List<MyTreeNode> family, int index)
-//{
-//    var current = family[index];
-//    var node = nodes.Cast<MyTreeNode>().FirstOrDefault(child => child.Text == current.Text);
-
-//    if (node == null)
-//    {
-//        node = new MyTreeNode(current.Text, current.m_ID, current.m_Handle);
-//        nodes.Add(node);
-//    }
-
-//    if (index < family.Count - 1)
-//    {
-//        AddNode(node.Nodes, family, index + 1);
-//    }
-//}
-
-//// This method takes a TreeView as input and returns the corresponding column index for the ListView.
-//// It maps treeViewElemType to 0, treeViewChannel to 1, and treeViewDatabase to 2.
-//// If the provided TreeView doesn't match any of the known tree views, it returns -1.
-//using ElementSearch;
-
-//private int GetTreeViewIndex(TreeView treeView)
-//{
-//    if (treeView == treeViewElemType)
-//    {
-//        return 0;
-//    }
-//    else if (treeView == treeViewChannel)
-//    {
-//        return 1;
-//    }
-//    else if (treeView == treeViewDatabase)
-//    {
-//        return 2;
-//    }
-
-//    return -1;
-//}
-
-//private void RemoveCheckedNodesFromListView(string nodeText, int columnIndex)
-//{
-//    foreach (ListViewItem item in listViewElements.Items)
-//    {
-//        if (item.SubItems[columnIndex].Text == nodeText)
-//        {
-//            listViewElements.Items.Remove(item);
-//            break;
-//        }
-//    }
-//}
-
-
-//private void HandleTreeViewAfterCheck(object? sender, TreeViewEventArgs e)
-//{
-//    if (e.Action == TreeViewAction.Unknown)
-//    {
-//        return;
-//    }
-
-//    var node = e.Node as MyTreeNode;
-
-//    if (node != null)
-//    {
-//        UpdateChildNodes(node, node.Checked);
-//    }
-
-//    TreeView treeView = (TreeView)sender;
-//    treeView.AfterCheck -= HandleTreeViewAfterCheck;
-
-//    if (node != null)
-//    {
-//        if (node.Checked)
-//        {
-//            AddCheckedNodesToListView(new[] { node }, GetTreeViewIndex(treeView));
-//        }
-//        else
-//        {
-//            RemoveCheckedNodesFromListView(new[] { node }, GetTreeViewIndex(treeView));
+//            return checkedNodes;
 //        }
 
-//        if (node.Parent != null)
-//        {
-//            UpdateParentNode(node.Parent as MyTreeNode);
-//        }
-//    }
-
-//    treeView.AfterCheck += HandleTreeViewAfterCheck;
-//}
-
-// Latest TODO:
-
-//private void FormElementSearch_Load(object sender, EventArgs e)
-//{
-//    string filePath = "logs\\lst_LogData_elm_all.cvs";
-//    List<List<string>> fileTokens = ReadTextFile(filePath);
-//    FillListView(listViewElements, fileTokens);
-//}
-
-//private List<List<string>> ReadTextFile(string filePath)
-//{
-//    List<List<string>> fileTokens = new List<List<string>>();
-
-//    using (var reader = new StreamReader(filePath))
-//    {
-//        string line;
-
-//        while ((line = reader.ReadLine()) != null)
-//        {
-//            var tokens = line.Split('@').Where(token => !string.IsNullOrEmpty(token)).ToList();
-//            fileTokens.Add(tokens);
-//        }
-//    }
-
-//    return fileTokens;
-//}
-
-//private void FillListView(ListView listView, List<List<string>> fileTokens)
-//{
-//    listView.BeginUpdate();
-//    listView.Items.Clear();
-
-//    foreach (var lineTokens in fileTokens)
-//    {
-//        if (lineTokens.Count < 8)
-//            continue;
-
-//        ListViewItem newItem = new ListViewItem(lineTokens[0]); // ID
-
-//        newItem.SubItems.Add(lineTokens[1]); // Long Name
-//        newItem.SubItems.Add(lineTokens[2]); // Short Name
-//        newItem.SubItems.Add(lineTokens[3]); // Elem Type
-//        newItem.SubItems.Add(lineTokens[4]); // Channel
-//        newItem.SubItems.Add(lineTokens[5]); // Database
-//        newItem.SubItems.Add(lineTokens[6]); // Location
-//        newItem.SubItems.Add(lineTokens[7]); // Handle
-
-//        listView.Items.Add(newItem);
-//    }
-
-//    listView.EndUpdate();
-//}
-
-//// This implementation uses the async/await pattern and the Task.WhenAll() function to read the three text files in parallel.
-//// The ReadTextFile function returns a Task<List<List<string>>> instead of directly modifying a passed-in list.
-//// This allows us to use Task.WhenAll() to wait for all file reading tasks to complete before proceeding to fill the TreeView controls.
-//private async void FormElementSearch_Load(object sender, EventArgs e)
-
-
-//// In this implementation, we have three separate event handlers, one for each TreeView control.
-//// Each of these handlers calls the HandleTreeViewAfterCheck function, which contains the shared logic for all three TreeView controls.
-//// The HandleTreeViewAfterCheck function manages the addition and removal of the event handler based on the sender,
-//// which is the specific TreeView control that fired the event.
-//private void treeViewElemType_AfterCheck(object sender, TreeViewEventArgs e)
-//{
-//    HandleTreeViewAfterCheck(sender, e);
-
-//    UpdateListView();
-//}
-
-
-//// This function is an event handler for the AfterCheck event on the TreeView control.
-//// When a node's checkbox is checked or unchecked, it updates the parent and child nodes accordingly.
-//// It also temporarily removes the event handler to prevent recursion before re-adding it after the updates are completed.
-//private void HandleTreeViewAfterCheck(object? sender, TreeViewEventArgs e)
-
-
-//private async Task<List<List<string>>> ReadTextFile(string filePath)
-//{
-//    var fileTokens = new List<List<string>>();
-
-//    using (var reader = new StreamReader(filePath))
-//    {
-//        string? line;
-//        while ((line = await reader.ReadLineAsync()) != null)
-//        {
-//            var tokens = line.Split('@').Where(token => !string.IsNullOrEmpty(token)).ToList();
-//            fileTokens.Add(tokens);
-//        }
-//    }
-
-//    return fileTokens;
-//}
-
-//private async Task<List<List<string>>> ReadTextFile(string filePath)
-//{
-//    var fileTokens = new List<List<string>>();
-
-//    using (var reader = File.ReadLines(filePath))
-//    {
-//        foreach (var line in reader)
-//        {
-//            var tokens = line.Split('@').Where(token => !string.IsNullOrEmpty(token)).ToList();
-//            fileTokens.Add(tokens);
-//        }
-//    }
-
-//    return fileTokens;
-//}
-
-
-//private void FillTreeView(TreeView treeView, List<List<string>> fileTokens)
-//{
-//    treeView.BeginUpdate();
-//    treeView.Nodes.Clear();
-
-//    foreach (var lineTokens in fileTokens)
-//    {
-//        if (lineTokens.Count < 3)
-//            continue;
-
-//        uint.TryParse(lineTokens[0], out uint id);
-//        string family_hierarhy = lineTokens[1];
-//        uint.TryParse(lineTokens[2], out uint handle);
-
-//        var relatives = family_hierarhy.Split('/').Select(relative => new MyTreeNode(relative, id, handle)).ToList();
-
-//        AddNode(treeView.Nodes, relatives, 0);
-//    }
-
-//    treeView.EndUpdate();
-//}
-
-
-//private IEnumerable<TreeNode> GetCheckedNodes(TreeNodeCollection nodes)
-//{
-//    return nodes.Cast<TreeNode>()
-//        .Where(node => node.Checked)
-//        .Concat(nodes.Cast<TreeNode>().SelectMany(node => GetCheckedNodes(node.Nodes)));
-//}
-
-//        private void UpdateListView()
+//        private void UpdateListView() // with ID numbers taken from Nodes
 //        {
 //            listViewElements.Items.Clear();
 
@@ -679,24 +250,32 @@
 //            var checkedChannelNodes = GetCheckedNodes(treeViewChannel.Nodes).OfType<TreeNode>().ToList();
 //            var checkedDatabaseNodes = GetCheckedNodes(treeViewDatabase.Nodes).OfType<TreeNode>().ToList();
 
-//            var allCheckedNodes = checkedElemTypeNodes.Concat(checkedChannelNodes).Concat(checkedDatabaseNodes);
+//            var allCheckedNodeIds = new HashSet<uint>(checkedElemTypeNodes.Concat(checkedChannelNodes).Concat(checkedDatabaseNodes).Select(node => (node.Tag as MyTreeNode)?._ID ?? 0));
+//            var allCheckedNodes = checkedElemTypeNodes.Concat(checkedChannelNodes).Concat(checkedDatabaseNodes).Select(node => node.Tag as MyTreeNode).Where(node => node != null).GroupBy(node => node._ID).ToDictionary(g => g.Key, g => g.First()._Handle);
 
-//            foreach (var node in allCheckedNodes)
+//            foreach (var id in _elementDataById.Keys)
 //            {
-//                var originalNode = node.Tag as MyTreeNode; // Retrieve the original MyTreeNode object from the Tag property
-
-//#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
-//                if (originalNode != null && _elementDataById.TryGetValue(originalNode.m_ID, out ElementData elementData))
-//#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
+//                if (allCheckedNodeIds.Contains(id))
 //                {
+//                    ElementData elementData = _elementDataById[id];
 //                    ListViewItem newItem = new ListViewItem(elementData.ID.ToString());
 //                    newItem.SubItems.Add(elementData.LongName);
 //                    newItem.SubItems.Add(elementData.ShortName);
-//                    newItem.SubItems.Add(elementData.ElementType);
-//                    newItem.SubItems.Add(elementData.Channel);
-//                    newItem.SubItems.Add(elementData.Database);
+
+//                    newItem.SubItems.Add(_elementTypeById.TryGetValue(uint.Parse(elementData.ElementType), out string elementType) ? elementType : elementData.ElementType);
+//                    newItem.SubItems.Add(_channelById.TryGetValue(uint.Parse(elementData.Channel), out string channel) ? channel : elementData.Channel);
+//                    newItem.SubItems.Add(_databaseById.TryGetValue(uint.Parse(elementData.Database), out string database) ? database : elementData.Database);
+
 //                    newItem.SubItems.Add(elementData.Location);
-//                    newItem.SubItems.Add(elementData.Handle.ToString());
+
+//                    if (allCheckedNodes.TryGetValue(id, out uint handle))
+//                    {
+//                        newItem.SubItems.Add(handle.ToString());
+//                    }
+//                    else
+//                    {
+//                        newItem.SubItems.Add(elementData.Handle.ToString());
+//                    }
 
 //                    listViewElements.Items.Add(newItem);
 //                }
@@ -704,113 +283,397 @@
 //        }
 
 
-//private void UpdateListView()
-//{
-//    listViewElements.Items.Clear();
+//        //// This UpdateListView retrieves the checked leaf nodes and combines them into a single HashSet containing
+//        //// the unique ID numbers of all checked nodes. Then it iterates through the keys of the _elementDataById
+//        //// dictionary and checks if the current key is present in the HashSet.
+//        //// If it is, the corresponding ElementData object is used to create a new ListViewItem,
+//        //// which is then added to the listViewElements.Items collection.
+//        //// This implementation provides good performance, especially when there are many nodes in the tree view and
+//        //// the internal data structure.
+//        //private void UpdateListView()
+//        //{
+//        //    listViewElements.Items.Clear();
 
-//    var checkedElemTypeNodes = GetCheckedNodes(treeViewElemType.Nodes).OfType<MyTreeNode>().ToList();
-//    var checkedChannelNodes = GetCheckedNodes(treeViewChannel.Nodes).OfType<MyTreeNode>().ToList();
-//    var checkedDatabaseNodes = GetCheckedNodes(treeViewDatabase.Nodes).OfType<MyTreeNode>().ToList();
+//        //    var checkedElemTypeNodes = GetCheckedNodes(treeViewElemType.Nodes).OfType<TreeNode>().ToList();
+//        //    var checkedChannelNodes = GetCheckedNodes(treeViewChannel.Nodes).OfType<TreeNode>().ToList();
+//        //    var checkedDatabaseNodes = GetCheckedNodes(treeViewDatabase.Nodes).OfType<TreeNode>().ToList();
 
-//    var allCheckedNodeIds = new HashSet<uint>(checkedElemTypeNodes.Concat(checkedChannelNodes).Concat(checkedDatabaseNodes).Select(node => node.m_ID));
+//        //    var allCheckedNodeIds = new HashSet<uint>(checkedElemTypeNodes.Concat(checkedChannelNodes).Concat(checkedDatabaseNodes).Select(node => (node.Tag as MyTreeNode)?._ID ?? 0));
 
-//    foreach (var id in _elementDataById.Keys)
-//    {
-//        if (allCheckedNodeIds.Contains(id))
+//        //    foreach (var id in _elementDataById.Keys)
+//        //    {
+//        //        if (allCheckedNodeIds.Contains(id))
+//        //        {
+//        //            ElementData elementData = _elementDataById[id];
+//        //            ListViewItem newItem = new ListViewItem(elementData.ID.ToString());
+//        //            newItem.SubItems.Add(elementData.LongName);
+//        //            newItem.SubItems.Add(elementData.ShortName);
+
+//        //            newItem.SubItems.Add(_elementTypeById.TryGetValue(uint.Parse(elementData.ElementType), out string elementType) ? elementType : elementData.ElementType);
+//        //            newItem.SubItems.Add(_channelById.TryGetValue(uint.Parse(elementData.Channel), out string channel) ? channel : elementData.Channel);
+//        //            newItem.SubItems.Add(_databaseById.TryGetValue(uint.Parse(elementData.Database), out string database) ? database : elementData.Database);
+
+//        //            newItem.SubItems.Add(elementData.Location);
+//        //            newItem.SubItems.Add(elementData.Handle.ToString());
+
+//        //            listViewElements.Items.Add(newItem);
+//        //        }
+//        //    }
+//        //}
+
+//        private void FindAndCheckNode(TreeView treeView, string nameToFind)
 //        {
-//            ElementData elementData = _elementDataById[id];
-//            ListViewItem newItem = new ListViewItem(elementData.ID.ToString());
-//            newItem.SubItems.Add(elementData.LongName);
-//            newItem.SubItems.Add(elementData.ShortName);
-//            newItem.SubItems.Add(elementData.ElementType);
-//            newItem.SubItems.Add(elementData.Channel);
-//            newItem.SubItems.Add(elementData.Database);
-//            newItem.SubItems.Add(elementData.Location);
-//            newItem.SubItems.Add(elementData.Handle.ToString());
-
-//            listViewElements.Items.Add(newItem);
-//        }
-//    }
-//}
-
-//private void AddCheckedNodesToListView(IEnumerable<TreeNode> checkedNodes, int columnIndex)
-//{
-//    foreach (var node in checkedNodes)
-//    {
-//        // Check if the node is a child node (has no children)
-//        if (node.Nodes.Count == 0)
-//        {
-//            var newItem = new ListViewItem();
-
-//            // Replace the node separator with the desired separator
-//            string fullPath = node.FullPath.Replace("\\", "/");
-
-//            if (columnIndex == 0)
+//            foreach (TreeNode node in treeView.Nodes)
 //            {
-//                newItem.Text = fullPath;
-//            }
-//            else
-//            {
-//                newItem.Text = "";
-
-//                // Add empty subitems for the previous columns
-//                for (int i = 0; i < columnIndex; i++)
+//                TreeNode foundNode = FindNodeByName(node, nameToFind);
+//                if (foundNode != null)
 //                {
-//                    newItem.SubItems.Add("");
+//                    foundNode.Checked = true;
+//                    treeView.SelectedNode = foundNode;
+//                    foundNode.Expand();
+//                    break;
 //                }
+//            }
+//        }
 
-//                newItem.SubItems.Add(fullPath);
+//        private TreeNode FindNodeByName(TreeNode parentNode, string nameToFind)
+//        {
+//            if (parentNode.Text == nameToFind)
+//            {
+//                return parentNode;
 //            }
 
-//            listViewElements.Items.Add(newItem);
+//            foreach (TreeNode childNode in parentNode.Nodes)
+//            {
+//                TreeNode foundNode = FindNodeByName(childNode, nameToFind);
+//                if (foundNode != null)
+//                {
+//                    return foundNode;
+//                }
+//            }
+
+//            return null;
+//        }
+
+//        private void buttonSearch_Click(object sender, EventArgs e)
+//        {
+//            string elemTypeToFind = textBoxElemType.Text;
+//            string channelToFind = textBoxChannel.Text;
+//            string databaseToFind = textBoxDatabase.Text;
+
+//            FindAndCheckNode(treeViewElemType, elemTypeToFind);
+//            FindAndCheckNode(treeViewChannel, channelToFind);
+//            FindAndCheckNode(treeViewDatabase, databaseToFind);
+
+//            UpdateListView();
+//        }
+
+//        private void buttonClear_Click(object sender, EventArgs e)
+//        {
+//            // Clear all TextBoxes
+//            textBoxElemType.Clear();
+//            textBoxChannel.Clear();
+//            textBoxDatabase.Clear();
+
+//            // Uncheck all nodes and collapse the node hierarchy in all TreeViews
+//            ClearTreeView(treeViewElemType);
+//            ClearTreeView(treeViewChannel);
+//            ClearTreeView(treeViewDatabase);
+
+//            // Clear the entire ListView
+//            listViewElements.Items.Clear();
+//        }
+
+//        private void ClearTreeView(TreeView treeView)
+//        {
+//            foreach (TreeNode node in treeView.Nodes)
+//            {
+//                UncheckAndCollapseNodes(node);
+//            }
+//        }
+
+//        private void UncheckAndCollapseNodes(TreeNode parentNode)
+//        {
+//            parentNode.Checked = false;
+//            parentNode.Collapse();
+
+//            foreach (TreeNode childNode in parentNode.Nodes)
+//            {
+//                UncheckAndCollapseNodes(childNode);
+//            }
 //        }
 //    }
 //}
 
-//private void UpdateListView()
+//private void buttonSend_Click(object sender, EventArgs e)
 //{
-//    listViewElements.Items.Clear();
-
-//    var checkedElemTypeNodes = GetCheckedNodes(treeViewElemType.Nodes).OfType<MyTreeNode>().ToList();
-//    var checkedChannelNodes = GetCheckedNodes(treeViewChannel.Nodes).OfType<MyTreeNode>().ToList();
-//    var checkedDatabaseNodes = GetCheckedNodes(treeViewDatabase.Nodes).OfType<MyTreeNode>().ToList();
-
-//    var allCheckedNodeIds = new HashSet<uint>(checkedElemTypeNodes.Concat(checkedChannelNodes).Concat(checkedDatabaseNodes).Select(node => node.m_ID));
-
-//    Dictionary<uint, string> elementTypeLongNameById = treeViewElemType.Nodes
-//        .Cast<MyTreeNode>()
-//        .ToDictionary(node => node.m_ID, node => node.Text);
-
-//    Dictionary<uint, string> channelLongNameById = treeViewChannel.Nodes
-//        .Cast<MyTreeNode>()
-//        .ToDictionary(node => node.m_ID, node => node.Text);
-
-//    Dictionary<uint, string> databaseLongNameById = treeViewDatabase.Nodes
-//        .Cast<MyTreeNode>()
-//        .ToDictionary(node => node.m_ID, node => node.Text);
-
-//    foreach (var id in _elementDataById.Keys)
+//    List<string> selectedIds = new List<string>();
+//    foreach (ListViewItem item in listViewElements.SelectedItems)
 //    {
-//        if (allCheckedNodeIds.Contains(id))
+//        selectedIds.Add(item.SubItems[0].Text);
+//    }
+
+//    SendDataToCPipe(string.Join(",", selectedIds));
+//}
+
+//private async void buttonSend_Click(object sender, EventArgs e)
+//{
+//    var selectedIDs = listViewElements.SelectedItems
+//        .Cast<ListViewItem>()
+//        .Select(item => item.SubItems[0].Text)
+//        .ToList();
+
+//    var idsString = string.Join(",", selectedIDs);
+
+//    await Task.Run(() =>
+//    {
+//        using (var pipeServer = new NamedPipeServerStream("Local\\my_pipe", PipeDirection.Out))
 //        {
-//            ElementData elementData = _elementDataById[id];
-//            ListViewItem newItem = new ListViewItem(elementData.ID.ToString());
-//            newItem.SubItems.Add(elementData.LongName);
-//            newItem.SubItems.Add(elementData.ShortName);
+//            pipeServer.WaitForConnection();
 
-//            uint.TryParse(elementData.ElementType, out uint elementType);
-//            newItem.SubItems.Add(elementTypeLongNameById.TryGetValue(elementType, out string elementTypeLongName) ? elementTypeLongName : elementData.ElementType);
-
-//            uint.TryParse(elementData.Channel, out uint channel);
-//            newItem.SubItems.Add(channelLongNameById.TryGetValue(channel, out string channelLongName) ? channelLongName : elementData.Channel);
-
-//            uint.TryParse(elementData.Database, out uint database);
-//            newItem.SubItems.Add(databaseLongNameById.TryGetValue(database, out string databaseLongName) ? databaseLongName : elementData.Database);
-
-//            newItem.SubItems.Add(elementData.Location);
-//            newItem.SubItems.Add(elementData.Handle.ToString());
-
-//            listViewElements.Items.Add(newItem);
+//            using (var writer = new StreamWriter(pipeServer))
+//            {
+//                writer.Write(idsString);
+//                writer.Flush();
+//            }
 //        }
+//    });
+//}
+
+//private async void buttonSend_Click(object sender, EventArgs e)
+//{
+//    var selectedIDs = listViewElements.SelectedItems
+//        .Cast<ListViewItem>()
+//        .Select(item => item.SubItems[0].Text)
+//        .ToList();
+
+//    var idsString = string.Join(",", selectedIDs);
+
+//    await Task.Run(() =>
+//    {
+//        using (var pipeServer = new NamedPipeServerStream("Global\\my_pipe", PipeDirection.Out))
+//        {
+//            pipeServer.WaitForConnection();
+
+//            using (var writer = new StreamWriter(pipeServer))
+//            {
+//                writer.Write(idsString);
+//                writer.Flush();
+//            }
+//        }
+//    });
+//}
+
+//private async void buttonSend_Click(object sender, EventArgs e)
+//{
+//    var selectedIDs = listViewElements.SelectedItems
+//        .Cast<ListViewItem>()
+//        .Select(item => item.SubItems[0].Text)
+//        .ToList();
+
+//    var idsString = string.Join(",", selectedIDs);
+
+//    await Task.Run(() =>
+//    {
+//        var securityIdentifier = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
+//        var accessRule = new PipeAccessRule(securityIdentifier, PipeAccessRights.ReadWrite, AccessControlType.Allow);
+//        var security = new PipeSecurity();
+//        security.AddAccessRule(accessRule);
+
+//        using (var pipeServer = new NamedPipeServerStream("my_pipe", PipeDirection.Out, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous, 0, 0, security))
+//        {
+//            pipeServer.WaitForConnection();
+
+//            using (var writer = new StreamWriter(pipeServer))
+//            {
+//                writer.Write(idsString);
+//                writer.Flush();
+//            }
+//        }
+//    });
+//}
+
+
+//private async void buttonSend_Click(object sender, EventArgs e)
+//{
+//    using (var pipeServer = new NamedPipeServerStream("my_pipe", PipeDirection.Out, NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Byte, PipeOptions.Asynchronous))
+//    {
+//        await pipeServer.WaitForConnectionAsync();
+
+//        using (var writer = new StreamWriter(pipeServer))
+//        {
+//            foreach (ListViewItem item in listViewElements.SelectedItems)
+//            {
+//                string id = item.SubItems[0].Text;
+//                await writer.WriteLineAsync(id);
+//            }
+//        }
+//    }
+//}
+
+
+//private async void buttonSend_Click(object sender, EventArgs e)
+//{
+//    PipeSecurity pipeSecurity = new PipeSecurity();
+//    pipeSecurity.AddAccessRule(new PipeAccessRule("Everyone", PipeAccessRights.ReadWrite, System.Security.AccessControl.AccessControlType.Allow));
+
+//    using (var pipeServer = new NamedPipeServerStream("my_pipe", PipeDirection.Out, NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Byte, PipeOptions.Asynchronous, 512, 512, pipeSecurity))
+//    {
+//        await pipeServer.WaitForConnectionAsync();
+
+//        using (var writer = new StreamWriter(pipeServer))
+//        {
+//            foreach (ListViewItem item in listViewElements.SelectedItems)
+//            {
+//                string id = item.SubItems[0].Text;
+//                await writer.WriteLineAsync(id);
+//            }
+//        }
+//    }
+//}
+
+
+//private void SendDataToCPipe(string data)
+//{
+//    using (var pipeServer = new NamedPipeServerStream("my_pipe", PipeDirection.Out))
+//    {
+//        pipeServer.WaitForConnection();
+
+//        using (var sw = new StreamWriter(pipeServer))
+//        {
+//            sw.AutoFlush = true;
+//            sw.WriteLine(data);
+//        }
+//    }
+//}
+
+//private static NamedPipeServerStream CreateNamedPipeServerStreamWithSecurity(string pipeName)
+//{
+//    PipeSecurity pipeSecurity = new PipeSecurity();
+//    SecurityIdentifier sid = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
+//    PipeAccessRule par = new PipeAccessRule(sid, PipeAccessRights.ReadWrite, AccessControlType.Allow);
+//    pipeSecurity.AddAccessRule(par);
+
+//    var pipeServer = new NamedPipeServerStream(pipeName, PipeDirection.Out, NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Byte, PipeOptions.Asynchronous, 0, 0, pipeSecurity);
+//    return pipeServer;
+//}
+
+//private async void buttonSend_Click(object sender, EventArgs e)
+//{
+//    using (var pipeServer = CreateNamedPipeServerStreamWithSecurity("my_pipe"))
+//    {
+//        await pipeServer.WaitForConnectionAsync();
+
+//        using (var writer = new StreamWriter(pipeServer))
+//        {
+//            foreach (ListViewItem item in listViewElements.SelectedItems)
+//            {
+//                string id = item.SubItems[0].Text;
+//                await writer.WriteLineAsync(id);
+//            }
+//        }
+//    }
+//}
+
+//private async void buttonSend_Click(object sender, EventArgs e)
+//{
+//    PipeSecurity pipeSecurity = new PipeSecurity();
+//    SecurityIdentifier everyoneSid = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
+//    PipeAccessRule everyoneRule = new PipeAccessRule(everyoneSid, PipeAccessRights.FullControl, AccessControlType.Allow);
+//    pipeSecurity.AddAccessRule(everyoneRule);
+
+//    using (var pipeServer = NamedPipeServerStreamAcl.Create("my_pipe", PipeDirection.Out, NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Byte, PipeOptions.Asynchronous, 0, 0, pipeSecurity))
+//    {
+//        await pipeServer.WaitForConnectionAsync();
+
+//        using (var writer = new StreamWriter(pipeServer))
+//        {
+//            foreach (ListViewItem item in listViewElements.SelectedItems)
+//            {
+//                string id = item.SubItems[0].Text;
+//                await writer.WriteLineAsync(id);
+//            }
+//        }
+//    }
+//}
+
+
+//private async void buttonSend_Click(object sender, EventArgs e)
+//{
+//    string pipeName = "mypipe_" + Guid.NewGuid().ToString("N");
+
+//    using (var pipeServer = new NamedPipeServerStream(pipeName, PipeDirection.Out, NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Byte, PipeOptions.Asynchronous | PipeOptions.CurrentUserOnly))
+//    {
+//        await pipeServer.WaitForConnectionAsync();
+
+//        using (var writer = new StreamWriter(pipeServer))
+//        {
+//            foreach (ListViewItem item in listViewElements.SelectedItems)
+//            {
+//                string id = item.SubItems[0].Text;
+//                await writer.WriteLineAsync(id);
+//            }
+//        }
+//    }
+//}
+
+
+//private async void buttonSend_Click(object sender, EventArgs e)
+//{
+//    string pipeName = "mypipe_" + Guid.NewGuid().ToString("N");
+//    Environment.SetEnvironmentVariable("MY_PIPE_NAME", pipeName, EnvironmentVariableTarget.User);
+
+//    //// Write the pipeName to a shared file
+//    ////File.WriteAllText("../pipe_name.txt", pipeName);
+
+//    //string filePath = @"D:\Sandbox\ElementSearchApp\pipe_name.txt";
+//    //File.WriteAllText(filePath, pipeName);
+
+//    using (var pipeServer = new NamedPipeServerStream(pipeName, PipeDirection.Out, NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Byte, PipeOptions.Asynchronous | PipeOptions.CurrentUserOnly))
+//    {
+//        await pipeServer.WaitForConnectionAsync();
+
+//        using (var writer = new StreamWriter(pipeServer))
+//        {
+//            foreach (ListViewItem item in listViewElements.SelectedItems)
+//            {
+//                string id = item.SubItems[0].Text;
+//                await writer.WriteLineAsync(id);
+//            }
+//        }
+//    }
+//}
+
+//private async void buttonSend_Click(object sender, EventArgs e)
+//{
+//    string sharedMemoryName = "MySharedMemory";
+//    int memorySize = 1024;
+
+//    using (var sharedMemory = MemoryMappedFile.CreateNew(sharedMemoryName, memorySize))
+//    {
+//        using (var accessor = sharedMemory.CreateViewAccessor())
+//        {
+//            StringBuilder sb = new StringBuilder();
+
+//            foreach (ListViewItem item in listViewElements.SelectedItems)
+//            {
+//                string id = item.SubItems[0].Text;
+//                sb.AppendLine(id);
+//            }
+
+//            string message = sb.ToString();
+//            byte[] data = Encoding.UTF8.GetBytes(message);
+//            accessor.WriteArray(0, data, 0, data.Length);
+//        }
+//    }
+
+//    using (EventWaitHandle dataReady = new EventWaitHandle(false, EventResetMode.AutoReset, "DataReadyEvent"))
+//    using (EventWaitHandle dataRead = new EventWaitHandle(false, EventResetMode.AutoReset, "DataReadEvent"))
+//    {
+//        Signal the client that data is ready to be read.
+//        dataReady.Set();
+
+//        Wait for the client to signal that it has finished reading the data.
+//       dataRead.WaitOne();
 //    }
 //}

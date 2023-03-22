@@ -9,38 +9,38 @@ namespace ElementSearch
 {
     public class MyTreeNode : TreeNode
     {
-        public uint m_ID { get; set; }
-        public uint m_Handle { get; set; }
+        public uint _ID { get; set; }
+        public uint _Handle { get; set; }
 
         public MyTreeNode()
         {
-            m_ID = 0;
-            m_Handle = 0;
+            _ID = 0;
+            _Handle = 0;
         }
 
         public MyTreeNode(string text) : base(text)
         {
-            m_ID = 0;
-            m_Handle = 0;
+            _ID = 0;
+            _Handle = 0;
         }
 
         public MyTreeNode(string text, uint id, uint handle) : base(text)
         {
-            m_ID = id;
-            m_Handle = handle;
+            _ID = id;
+            _Handle = handle;
         }
 
         public MyTreeNode(string text, MyTreeNode[] children) : base(text)
         {
-            m_ID = 0;
-            m_Handle = 0;
+            _ID = 0;
+            _Handle = 0;
             Nodes.AddRange(children);
         }
 
         public MyTreeNode(MyTreeNode other) : base(other.Text)
         {
-            m_ID = other.m_ID;
-            m_Handle = other.m_Handle;
+            _ID = other._ID;
+            _Handle = other._Handle;
             Checked = other.Checked;
         }
     }
