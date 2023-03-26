@@ -677,3 +677,29 @@
 //       dataRead.WaitOne();
 //    }
 //}
+
+//private void buttonSend_Click(object sender, EventArgs e)
+//{
+//    string sharedMemoryName = "MySharedMemory";
+//    int memorySize = 1024;
+
+//    using (var sharedMemory = MemoryMappedFile.CreateNew(sharedMemoryName, memorySize))
+//    {
+//        using (var accessor = sharedMemory.CreateViewAccessor())
+//        {
+//            StringBuilder sb = new StringBuilder();
+
+//            foreach (ListViewItem item in listViewElements.SelectedItems)
+//            {
+//                string id = item.SubItems[0].Text;
+//                sb.AppendLine(id);
+//            }
+
+//            string message = sb.ToString();
+//            byte[] data = Encoding.UTF8.GetBytes(message);
+//            accessor.WriteArray(0, data, 0, data.Length);
+
+//            MessageBox.Show("Data written to shared memory. Waiting for client to read...");
+//        }
+//    }
+//}
