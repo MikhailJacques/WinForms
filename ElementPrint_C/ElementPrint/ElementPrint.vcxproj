@@ -24,6 +24,7 @@
     <ProjectGuid>{27c90c54-cee0-4c99-b52a-76b58f70d7d7}</ProjectGuid>
     <RootNamespace>ProcessIDs</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>ElementPrint</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

@@ -1,5 +1,4 @@
 using ElementSearch;
-using Microsoft.VisualBasic.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Metrics;
@@ -9,9 +8,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.IO.Pipes;
-using System.Security.AccessControl;
-using System.Security.Principal;
-using System.IO.MemoryMappedFiles;
 using System.Text;
 
 namespace ElementSearch
