@@ -384,14 +384,14 @@ namespace ElementSearch
 
         private void buttonSend_Click(object sender, EventArgs e)
         {
-            string message = string.Join(",", listViewElements.SelectedItems.Cast<ListViewItem>().Select(item => item.SubItems[0].Text));
+            string selectedElementIDs = string.Join(",", listViewElements.SelectedItems.Cast<ListViewItem>().Select(item => item.SubItems[0].Text));
 
-            SendDataToPipe(message);
+            SendDataToPipe(selectedElementIDs);
         }
 
         private void SendDataToPipe(string data)
         {
-            string pipeName = "MyPipe";
+            string pipeName = "Pipe_Element_ID";
             using (NamedPipeClientStream pipeClient = new NamedPipeClientStream(".", pipeName, PipeDirection.Out))
             {
                 pipeClient.Connect();
