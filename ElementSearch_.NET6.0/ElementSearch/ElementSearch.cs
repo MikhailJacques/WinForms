@@ -378,11 +378,11 @@ namespace ElementSearch
             }
         }
 
-        private void buttonSend_Click(object sender, EventArgs e)
+        private async void buttonSend_Click(object sender, EventArgs e)
         {
             string selectedElementIDs = string.Join(",", listViewElements.SelectedItems.Cast<ListViewItem>().Select(item => item.SubItems[0].Text));
 
-            SendDataToPipe(selectedElementIDs);
+            await Task.Run(() => SendDataToPipe(selectedElementIDs));
         }
 
         private void SendDataToPipe(string data)
@@ -390,12 +390,20 @@ namespace ElementSearch
             string pipeName = "Pipe_Element_ID";
             using (NamedPipeClientStream pipeClient = new NamedPipeClientStream(".", pipeName, PipeDirection.Out))
             {
-                pipeClient.Connect();
-
-                using (StreamWriter sw = new StreamWriter(pipeClient))
+                try
                 {
-                    sw.WriteLine(data);
-                    sw.Flush();
+                    pipeClient.Connect(3000); // Set a timeout of 3000 milliseconds (3 seconds)
+
+                    using (StreamWriter sw = new StreamWriter(pipeClient, Encoding.ASCII))
+                    {
+                        sw.WriteLine(data);
+                        sw.Flush();
+                    }
+                }
+                catch (TimeoutException)
+                {
+                    // Handle the timeout exception, e.g., display a message to the user
+                    MessageBox.Show("The receiving application is not running.", "Connection Timeout", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
