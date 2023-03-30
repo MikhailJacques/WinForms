@@ -3,7 +3,6 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Drawing;
 
-
 using ElementSearch;
 using System;
 using System.Diagnostics;
@@ -13,7 +12,6 @@ using System.Threading.Tasks;
 using System.IO;
 using System.IO.Pipes;
 using System.Text;
-
 
 namespace ElementSearch
 {
@@ -45,243 +43,255 @@ namespace ElementSearch
         /// </summary>
         private void InitializeComponent()
         {
-            textBoxElemType = new TextBox();
-            treeViewElemType = new TreeView();
-            treeViewChannel = new TreeView();
-            treeViewDatabase = new TreeView();
-            listViewElements = new ListView();
-            columnHeaderID = new ColumnHeader();
-            columnHeaderLongName = new ColumnHeader();
-            columnHeaderShortName = new ColumnHeader();
-            columnHeaderElemType = new ColumnHeader();
-            columnHeaderChannel = new ColumnHeader();
-            columnHeaderDatabase = new ColumnHeader();
-            columnHeaderLocation = new ColumnHeader();
-            columnHeaderHandle = new ColumnHeader();
-            buttonSearch = new Button();
-            labelElemType = new Label();
-            labelChannel = new Label();
-            textBoxChannel = new TextBox();
-            labelDatabase = new Label();
-            textBoxDatabase = new TextBox();
-            buttonClear = new Button();
-            buttonSend = new Button();
-            SuspendLayout();
+            this.textBoxElementType = new System.Windows.Forms.TextBox();
+            this.treeViewElementType = new System.Windows.Forms.TreeView();
+            this.treeViewChannel = new System.Windows.Forms.TreeView();
+            this.treeViewDatabase = new System.Windows.Forms.TreeView();
+            this.listViewElements = new System.Windows.Forms.ListView();
+            this.columnHeaderID = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderLongName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderShortName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderElementType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderChannel = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderDatabase = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderLocation = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderHandle = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.labelElementType = new System.Windows.Forms.Label();
+            this.labelChannel = new System.Windows.Forms.Label();
+            this.textBoxChannel = new System.Windows.Forms.TextBox();
+            this.labelDatabase = new System.Windows.Forms.Label();
+            this.textBoxDatabase = new System.Windows.Forms.TextBox();
+            this.buttonClear = new System.Windows.Forms.Button();
+            this.buttonSend = new System.Windows.Forms.Button();
+            this.textBoxElementName = new System.Windows.Forms.TextBox();
+            this.SuspendLayout();
             // 
-            // textBoxElemType
+            // textBoxElementType
             // 
-            textBoxElemType.Location = new Point(81, 11);
-            textBoxElemType.Name = "textBoxElemType";
-            textBoxElemType.Size = new Size(231, 23);
-            textBoxElemType.TabIndex = 0;
-            textBoxElemType.KeyDown += TextBoxElemType_KeyDown;
+            this.textBoxElementType.Location = new System.Drawing.Point(98, 12);
+            this.textBoxElementType.Name = "textBoxElementType";
+            this.textBoxElementType.Size = new System.Drawing.Size(170, 20);
+            this.textBoxElementType.TabIndex = 0;
+            this.textBoxElementType.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxElementType_KeyDown);
             // 
-            // treeViewElemType
+            // treeViewElementType
             // 
-            treeViewElemType.CheckBoxes = true;
-            treeViewElemType.Location = new Point(12, 40);
-            treeViewElemType.Name = "treeViewElemType";
-            treeViewElemType.Size = new Size(300, 225);
-            treeViewElemType.TabIndex = 1;
-            treeViewElemType.AfterCheck += treeViewElemType_AfterCheck;
+            this.treeViewElementType.CheckBoxes = true;
+            this.treeViewElementType.Location = new System.Drawing.Point(10, 35);
+            this.treeViewElementType.Name = "treeViewElementType";
+            this.treeViewElementType.Size = new System.Drawing.Size(258, 196);
+            this.treeViewElementType.TabIndex = 1;
+            this.treeViewElementType.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.treeViewElementType_AfterCheck);
             // 
             // treeViewChannel
             // 
-            treeViewChannel.CheckBoxes = true;
-            treeViewChannel.Location = new Point(12, 305);
-            treeViewChannel.Name = "treeViewChannel";
-            treeViewChannel.Size = new Size(300, 225);
-            treeViewChannel.TabIndex = 3;
-            treeViewChannel.AfterCheck += treeViewChannel_AfterCheck;
+            this.treeViewChannel.CheckBoxes = true;
+            this.treeViewChannel.Location = new System.Drawing.Point(10, 264);
+            this.treeViewChannel.Name = "treeViewChannel";
+            this.treeViewChannel.Size = new System.Drawing.Size(258, 196);
+            this.treeViewChannel.TabIndex = 3;
+            this.treeViewChannel.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.treeViewChannel_AfterCheck);
             // 
             // treeViewDatabase
             // 
-            treeViewDatabase.CheckBoxes = true;
-            treeViewDatabase.Location = new Point(12, 569);
-            treeViewDatabase.Name = "treeViewDatabase";
-            treeViewDatabase.Size = new Size(300, 225);
-            treeViewDatabase.TabIndex = 5;
-            treeViewDatabase.AfterCheck += treeViewDatabase_AfterCheck;
+            this.treeViewDatabase.CheckBoxes = true;
+            this.treeViewDatabase.Location = new System.Drawing.Point(10, 493);
+            this.treeViewDatabase.Name = "treeViewDatabase";
+            this.treeViewDatabase.Size = new System.Drawing.Size(258, 196);
+            this.treeViewDatabase.TabIndex = 5;
+            this.treeViewDatabase.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.treeViewDatabase_AfterCheck);
             // 
             // listViewElements
             // 
-            listViewElements.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            listViewElements.Columns.AddRange(new ColumnHeader[] { columnHeaderID, columnHeaderLongName, columnHeaderShortName, columnHeaderElemType, columnHeaderChannel, columnHeaderDatabase, columnHeaderLocation, columnHeaderHandle });
-            listViewElements.FullRowSelect = true;
-            listViewElements.Location = new Point(325, 40);
-            listViewElements.Name = "listViewElements";
-            listViewElements.Size = new Size(985, 754);
-            listViewElements.TabIndex = 6;
-            listViewElements.UseCompatibleStateImageBehavior = false;
-            listViewElements.View = View.Details;
+            this.listViewElements.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.listViewElements.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeaderID,
+            this.columnHeaderLongName,
+            this.columnHeaderShortName,
+            this.columnHeaderElementType,
+            this.columnHeaderChannel,
+            this.columnHeaderDatabase,
+            this.columnHeaderLocation,
+            this.columnHeaderHandle});
+            this.listViewElements.FullRowSelect = true;
+            this.listViewElements.HideSelection = false;
+            this.listViewElements.Location = new System.Drawing.Point(279, 35);
+            this.listViewElements.Name = "listViewElements";
+            this.listViewElements.Size = new System.Drawing.Size(989, 654);
+            this.listViewElements.TabIndex = 6;
+            this.listViewElements.UseCompatibleStateImageBehavior = false;
+            this.listViewElements.View = System.Windows.Forms.View.Details;
             // 
             // columnHeaderID
             // 
-            columnHeaderID.Text = "ID";
-            columnHeaderID.Width = 40;
+            this.columnHeaderID.Text = "ID";
+            this.columnHeaderID.Width = 40;
             // 
             // columnHeaderLongName
             // 
-            columnHeaderLongName.Text = "Long Name";
-            columnHeaderLongName.Width = 200;
+            this.columnHeaderLongName.Text = "Long Name";
+            this.columnHeaderLongName.Width = 200;
             // 
             // columnHeaderShortName
             // 
-            columnHeaderShortName.Text = "Short Name";
-            columnHeaderShortName.Width = 100;
+            this.columnHeaderShortName.Text = "Short Name";
+            this.columnHeaderShortName.Width = 100;
             // 
-            // columnHeaderElemType
+            // columnHeaderElementType
             // 
-            columnHeaderElemType.Text = "Elem Type";
-            columnHeaderElemType.Width = 100;
+            this.columnHeaderElementType.Text = "Elem Type";
+            this.columnHeaderElementType.Width = 100;
             // 
             // columnHeaderChannel
             // 
-            columnHeaderChannel.Text = "Channel";
-            columnHeaderChannel.Width = 200;
+            this.columnHeaderChannel.Text = "Channel";
+            this.columnHeaderChannel.Width = 200;
             // 
             // columnHeaderDatabase
             // 
-            columnHeaderDatabase.Text = "Database";
-            columnHeaderDatabase.Width = 200;
+            this.columnHeaderDatabase.Text = "Database";
+            this.columnHeaderDatabase.Width = 200;
             // 
             // columnHeaderLocation
             // 
-            columnHeaderLocation.Text = "Location";
+            this.columnHeaderLocation.Text = "Location";
             // 
             // columnHeaderHandle
             // 
-            columnHeaderHandle.Text = "Handle";
-            columnHeaderHandle.Width = 80;
+            this.columnHeaderHandle.Text = "Handle";
+            this.columnHeaderHandle.Width = 80;
             // 
-            // buttonSearch
+            // labelElementType
             // 
-            buttonSearch.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            buttonSearch.Location = new Point(325, 11);
-            buttonSearch.Name = "buttonSearch";
-            buttonSearch.Size = new Size(89, 24);
-            buttonSearch.TabIndex = 7;
-            buttonSearch.Text = "Search";
-            buttonSearch.UseVisualStyleBackColor = true;
-            buttonSearch.Click += buttonSearch_Click;
-            // 
-            // labelElemType
-            // 
-            labelElemType.AutoSize = true;
-            labelElemType.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            labelElemType.Location = new Point(12, 14);
-            labelElemType.Name = "labelElemType";
-            labelElemType.Size = new Size(63, 15);
-            labelElemType.TabIndex = 8;
-            labelElemType.Text = "Elem Type";
+            this.labelElementType.AutoSize = true;
+            this.labelElementType.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.labelElementType.Location = new System.Drawing.Point(10, 12);
+            this.labelElementType.Name = "labelElementType";
+            this.labelElementType.Size = new System.Drawing.Size(82, 15);
+            this.labelElementType.TabIndex = 8;
+            this.labelElementType.Text = "Element Type";
             // 
             // labelChannel
             // 
-            labelChannel.AutoSize = true;
-            labelChannel.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            labelChannel.Location = new Point(12, 279);
-            labelChannel.Name = "labelChannel";
-            labelChannel.Size = new Size(51, 15);
-            labelChannel.TabIndex = 10;
-            labelChannel.Text = "Channel";
+            this.labelChannel.AutoSize = true;
+            this.labelChannel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.labelChannel.Location = new System.Drawing.Point(10, 242);
+            this.labelChannel.Name = "labelChannel";
+            this.labelChannel.Size = new System.Drawing.Size(51, 15);
+            this.labelChannel.TabIndex = 10;
+            this.labelChannel.Text = "Channel";
             // 
             // textBoxChannel
             // 
-            textBoxChannel.Location = new Point(81, 276);
-            textBoxChannel.Name = "textBoxChannel";
-            textBoxChannel.Size = new Size(231, 23);
-            textBoxChannel.TabIndex = 9;
-            textBoxChannel.KeyDown += TextBoxChannel_KeyDown;
+            this.textBoxChannel.Location = new System.Drawing.Point(98, 240);
+            this.textBoxChannel.Name = "textBoxChannel";
+            this.textBoxChannel.Size = new System.Drawing.Size(170, 20);
+            this.textBoxChannel.TabIndex = 9;
+            this.textBoxChannel.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxChannel_KeyDown);
             // 
             // labelDatabase
             // 
-            labelDatabase.AutoSize = true;
-            labelDatabase.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            labelDatabase.Location = new Point(12, 543);
-            labelDatabase.Name = "labelDatabase";
-            labelDatabase.Size = new Size(58, 15);
-            labelDatabase.TabIndex = 12;
-            labelDatabase.Text = "Database";
+            this.labelDatabase.AutoSize = true;
+            this.labelDatabase.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.labelDatabase.Location = new System.Drawing.Point(10, 471);
+            this.labelDatabase.Name = "labelDatabase";
+            this.labelDatabase.Size = new System.Drawing.Size(58, 15);
+            this.labelDatabase.TabIndex = 12;
+            this.labelDatabase.Text = "Database";
             // 
             // textBoxDatabase
             // 
-            textBoxDatabase.Location = new Point(81, 540);
-            textBoxDatabase.Name = "textBoxDatabase";
-            textBoxDatabase.Size = new Size(231, 23);
-            textBoxDatabase.TabIndex = 11;
-            textBoxDatabase.KeyDown += TextBoxDatabase_KeyDown;
+            this.textBoxDatabase.Location = new System.Drawing.Point(98, 469);
+            this.textBoxDatabase.Name = "textBoxDatabase";
+            this.textBoxDatabase.Size = new System.Drawing.Size(170, 20);
+            this.textBoxDatabase.TabIndex = 11;
+            this.textBoxDatabase.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxDatabase_KeyDown);
             // 
             // buttonClear
             // 
-            buttonClear.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            buttonClear.Location = new Point(420, 11);
-            buttonClear.Name = "buttonClear";
-            buttonClear.Size = new Size(89, 24);
-            buttonClear.TabIndex = 13;
-            buttonClear.Text = "Clear";
-            buttonClear.UseVisualStyleBackColor = true;
-            buttonClear.Click += buttonClear_Click;
+            this.buttonClear.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.buttonClear.Location = new System.Drawing.Point(455, 12);
+            this.buttonClear.Name = "buttonClear";
+            this.buttonClear.Size = new System.Drawing.Size(76, 21);
+            this.buttonClear.TabIndex = 13;
+            this.buttonClear.Text = "Clear";
+            this.buttonClear.UseVisualStyleBackColor = true;
+            this.buttonClear.Click += new System.EventHandler(this.buttonClear_Click);
             // 
             // buttonSend
             // 
-            buttonSend.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            buttonSend.Location = new Point(515, 11);
-            buttonSend.Name = "buttonSend";
-            buttonSend.Size = new Size(89, 24);
-            buttonSend.TabIndex = 14;
-            buttonSend.Text = "Send";
-            buttonSend.UseVisualStyleBackColor = true;
-            buttonSend.Click += buttonSend_Click;
+            this.buttonSend.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.buttonSend.Location = new System.Drawing.Point(537, 12);
+            this.buttonSend.Name = "buttonSend";
+            this.buttonSend.Size = new System.Drawing.Size(76, 21);
+            this.buttonSend.TabIndex = 14;
+            this.buttonSend.Text = "Send";
+            this.buttonSend.UseVisualStyleBackColor = true;
+            this.buttonSend.Click += new System.EventHandler(this.buttonSend_Click);
+            // 
+            // textBoxElementName
+            // 
+            this.textBoxElementName.Location = new System.Drawing.Point(279, 12);
+            this.textBoxElementName.Name = "textBoxElementName";
+            this.textBoxElementName.Size = new System.Drawing.Size(170, 20);
+            this.textBoxElementName.TabIndex = 15;
+            this.textBoxElementName.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxElementName_KeyDown);
             // 
             // FormElementSearch
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1322, 804);
-            Controls.Add(buttonSend);
-            Controls.Add(buttonClear);
-            Controls.Add(labelDatabase);
-            Controls.Add(textBoxDatabase);
-            Controls.Add(labelChannel);
-            Controls.Add(textBoxChannel);
-            Controls.Add(labelElemType);
-            Controls.Add(buttonSearch);
-            Controls.Add(listViewElements);
-            Controls.Add(treeViewDatabase);
-            Controls.Add(treeViewChannel);
-            Controls.Add(treeViewElemType);
-            Controls.Add(textBoxElemType);
-            Name = "FormElementSearch";
-            Text = "Element Search";
-            Load += FormElementSearch_Load;
-            ResumeLayout(false);
-            PerformLayout();
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(1277, 697);
+            this.Controls.Add(this.textBoxElementName);
+            this.Controls.Add(this.buttonSend);
+            this.Controls.Add(this.buttonClear);
+            this.Controls.Add(this.labelDatabase);
+            this.Controls.Add(this.textBoxDatabase);
+            this.Controls.Add(this.labelChannel);
+            this.Controls.Add(this.textBoxChannel);
+            this.Controls.Add(this.labelElementType);
+            this.Controls.Add(this.listViewElements);
+            this.Controls.Add(this.treeViewDatabase);
+            this.Controls.Add(this.treeViewChannel);
+            this.Controls.Add(this.treeViewElementType);
+            this.Controls.Add(this.textBoxElementType);
+            this.Name = "FormElementSearch";
+            this.Text = "Element Search";
+            this.Load += new System.EventHandler(this.FormElementSearch_Load);
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
         }
 
         #endregion
+        private Label labelElementType;
+        private Label labelChannel;
+        private Label labelDatabase;
 
-        private TextBox textBoxElemType;
-        private TreeView treeViewElemType;
+        private TreeView treeViewElementType;
         private TreeView treeViewChannel;
         private TreeView treeViewDatabase;
         private ListView listViewElements;
-        private Button buttonSearch;
-        private Button buttonClear;
-        private Label labelElemType;
-        private Label labelChannel;
+              
+        private TextBox textBoxElementType;
         private TextBox textBoxChannel;
-        private Label labelDatabase;
         private TextBox textBoxDatabase;
+        private TextBox textBoxElementName;
+
+        private List<TreeView> treeViewList = new List<TreeView>(3);
+
         private ColumnHeader columnHeaderLongName;
         private ColumnHeader columnHeaderShortName;
-        private ColumnHeader columnHeaderElemType;
+        private ColumnHeader columnHeaderElementType;
         private ColumnHeader columnHeaderChannel;
         private ColumnHeader columnHeaderDatabase;
         private ColumnHeader columnHeaderLocation;
         private ColumnHeader columnHeaderID;
         private ColumnHeader columnHeaderHandle;
 
-        private List<TreeView> treeViewList = new List<TreeView>(3);
-        private Button buttonSend;
+        private Button buttonClear;
+        private Button buttonSend;     
     }
 }

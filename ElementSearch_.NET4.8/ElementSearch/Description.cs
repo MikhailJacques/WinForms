@@ -1,43 +1,91 @@
-﻿//This code appears to be a C# Windows Forms application that allows users to search and display elements from a set of input text files.
-//The application provides an interface with three TreeViews for element types, channels, and databases,
-//as well as a ListView to display the search results.
+﻿
+//High - level summary of the code:
 
-// High-level summary of the code:
+// This code is for a C# Windows Forms application called ElementSearch.
+// The primary purpose of the application is to search, filter, and display elements based on certain criteria, such as element type, channel, and database.
+// Additionally, it allows users to search for elements by name and send the selected element IDs to another application through a named pipe.
 
-//The application uses the ElementSearch namespace and includes several using statements for required dependencies.
-//The FormElementSearch class is derived from the Form class, and it contains several private fields for storing dictionaries and element data.
-//The constructor initializes the form components.
-//The FormElementSearch_Load event handler loads data from text files located in the project's data directory and
-//populates the TreeViews with their respective data.
-//The FillDictionaries method processes the data from the text files to populate the dictionaries for element types, channels, and databases.
-//The ReadTextFile method reads the text files and tokenizes each line.
-//The FillTreeView method asynchronously populates the TreeViews with their respective data.
-//The AddNode method recursively adds nodes to the TreeView.
-//The UpdateChildNodes and UpdateParentNode methods update the checked state of child and parent nodes, respectively.
-//The treeViewElemType_AfterCheck, treeViewChannel_AfterCheck,
-//and treeViewDatabase_AfterCheck event handlers update the ListView when a node's checked state changes in any of the TreeViews.
-//The HandleTreeViewAfterCheck method handles the TreeView AfterCheck event, updating child and parent nodes' checked states.
-//The GetCheckedNodes method retrieves all checked nodes from the TreeView.
-//The UpdateListView method updates the ListView with search results based on the checked nodes in the TreeViews.
-//The FindAndCheckNode method finds and checks a node in the TreeView based on the given name.
-//The FindNodeByName method recursively searches for a TreeNode by name.
-//The buttonSearch_Click event handler searches for the specified element type, channel, and database and updates the ListView with the results.
-//The buttonClear_Click event handler clears the textboxes and TreeViews and resets the ListView.
-//The ClearTreeView method clears the checked state and collapses nodes in the TreeView.
-//The UncheckAndCollapseNodes method recursively unchecks and collapses TreeNodes.
-//When the application is executed, it reads data from the specified text files, populates the TreeViews, and allows the user to search for
-//specific element types, channels, and databases. The search results are then displayed in the ListView.
-//The user can clear the search input and reset the TreeViews using the "Clear" button.
+// On the form load, the application reads data from four different text files containing information about element types, channels, databases, and all elements.
+// It loads this data into dictionaries and tree views for further processing.
+
+// Three tree views (treeViewElementType, treeViewChannel, and treeViewDatabase) are used to display the hierarchical structure of element types, channels,
+// and databases. Users can check or uncheck nodes in these tree views to filter the elements displayed in the listViewElements.
+
+// The listViewElements displays the filtered elements with their detailed information such as
+// ID, long name, short name, element type, channel, database, location, and handle.
+
+// There are four text boxes (textBoxElementType, textBoxChannel, textBoxDatabase, and textBoxElementName)
+// that allow users to search for nodes in the tree views or elements in the list view by typing at least three characters and pressing Enter.
+
+// When users search in the text boxes, the application finds matching nodes in the corresponding tree view, checks them, expands their parent nodes,
+// and updates the list view with the new filter criteria.
+// The buttonClear clears the text boxes, unchecks all nodes in the tree views, collapses them, and clears the list view.
+
+// The buttonSend sends the selected element IDs from the list view to another application through a named pipe with a 3-second timeout.
+// If the receiving application is not running, it shows a timeout error message.
+
+// In summary, the ElementSearch application allows users to load, search, filter, and display elements based on different criteria.
+// Users can also send selected element IDs to another application through a named pipe.
+
+// Description of each function:
+
+// The following functions work together to provide the functionality of searching, filtering, displaying elements,
+// and sending selected element IDs to another application through a named pipe.
+
+// ElementSearch_Load:
+// This function is called when the form is loaded.It reads data from text files and initializes dictionaries and tree views with the data.
+
+// ReadDataFromFile:
+// A generic function to read data from a text file and return it as a list of strings.
+
+// GetCheckedNodes:
+// A recursive function that retrieves checked nodes from a TreeNodeCollection.
+// If a node is checked and has no child nodes, it creates a new TreeNode with the full path and stores the original node in the Tag property.
+// This function is used to collect checked nodes from treeViewElementType, treeViewChannel, and treeViewDatabase.
+
+// UpdateListView:
+// Updates the listViewElements based on the checked nodes in the tree views.
+// It collects the checked nodes, filters the elements, and populates the list view with the filtered elements.
+
+// FindAndCheckNodes:
+// Searches for nodes in a tree view by their name and checks them if they match the provided string.
+
+// FindNodesByName:
+// A recursive function that searches for nodes in a TreeNode hierarchy by their name, checks them if they match the provided string, and expands their parent nodes.
+
+// ClearTreeView:
+// Unchecks all nodes in a tree view and collapses them.
+
+// UncheckAndCollapseNodes:
+// A recursive function that unchecks a node, collapses it, and repeats the process for all its child nodes.
+
+// textBoxElementType_KeyDown:
+// Handles the KeyDown event of the textBoxElementType.
+// If the Enter key is pressed, it searches for nodes in treeViewElementType with a matching name and updates the list view.
+
+// textBoxChannel_KeyDown:
+// Handles the KeyDown event of the textBoxChannel.
+// If the Enter key is pressed, it searches for nodes in treeViewChannel with a matching name and updates the list view.
+
+// textBoxDatabase_KeyDown:
+// Handles the KeyDown event of the textBoxDatabase.
+// If the Enter key is pressed, it searches for nodes in treeViewDatabase with a matching name and updates the list view.
+
+// textBoxElementName_KeyDown:
+// Handles the KeyDown event of the textBoxElementName.
+// If the Enter key is pressed, it searches for elements in the list view with matching long or short names,
+// deselects any previously selected items, and selects the matching items.
+
+// buttonClear_Click:
+// Handles the Click event of the buttonClear.
+// It clears the text boxes, unchecks and collapses all nodes in the tree views, and clears the list view.
+
+// buttonSend_Click:
+// Handles the Click event of the buttonSend.
+// It sends the selected element IDs from the list view to another application through a named pipe.
+
+// SendDataToPipe:
+// Sends data to a named pipe. It tries to connect to the pipe and writes the data to it.
+// If the receiving application is not running, it shows a timeout error message.
 
 
-//It takes three lists of checked nodes (checkedElemTypeNodes, checkedChannelNodes, and checkedDatabaseNodes) and concatenates them into a single sequence. This means that all the elements from these three lists are combined into a single list.
-//For each node in the concatenated list, it extracts the Tag property and tries to cast it as an object of type MyTreeNode. The Tag property is used to store custom data associated with each node.
-//It filters out any nodes that were not successfully cast to MyTreeNode objects or are null. This ensures that the resulting sequence only contains valid MyTreeNode objects.
-//It groups the valid MyTreeNode objects by their _ID property. This creates groups of nodes that share the same _ID.
-//It creates a dictionary from the grouped nodes. The key of the dictionary is the _ID property, and the value is the _Handle property of the first node in each group. If the first node in the group has a null _Handle, the value will be set to 0.
-//In summary, this code snippet combines nodes from three lists, filters them, groups them by their _ID property, and creates a dictionary with the _ID as the key and the _Handle of the first node in each group as the value.
-//var allCheckedNodes = checkedElemTypeNodes.Concat(checkedChannelNodes).Concat(checkedDatabaseNodes)
-//    .Select(node => node.Tag as MyTreeNode)
-//    .Where(node => node != null)
-//    .GroupBy(node => node!._ID)
-//    .ToDictionary(g => g.Key, g => g.First()?._Handle ?? 0);
