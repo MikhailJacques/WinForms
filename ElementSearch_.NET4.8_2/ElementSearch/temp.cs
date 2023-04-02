@@ -452,4 +452,29 @@
 //    }
 //}
 
+//private void SearchAndCheckNode(TreeNode node, string searchText)
+//{
+//    if (node.Text.Contains(searchText))
+//    {
+//        if (!node.Checked)
+//        {
+//            node.Checked = true;
+//            uint nodeId = ((MyTreeNode)node)._ID;
+//            AddNodeDataToListView(nodeId);
+//        }
+
+//        TreeNode currentNode = node;
+//        while (currentNode.Parent != null)
+//        {
+//            currentNode.Parent.Expand();
+//            currentNode = currentNode.Parent;
+//        }
+//    }
+
+//    foreach (TreeNode childNode in node.Nodes)
+//    {
+//        SearchAndCheckNode(childNode, searchText);
+//    }
+//}
+
 

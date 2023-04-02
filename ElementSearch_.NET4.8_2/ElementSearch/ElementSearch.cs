@@ -446,7 +446,10 @@ namespace ElementSearch
 
         private void SearchAndCheckNode(TreeNode node, string searchText)
         {
-            if (node.Text.Contains(searchText))
+            string nodeTextLower = node.Text.ToLower();
+            string searchTextLower = searchText.ToLower();
+
+            if (nodeTextLower.Contains(searchTextLower))
             {
                 if (!node.Checked)
                 {
@@ -468,5 +471,6 @@ namespace ElementSearch
                 SearchAndCheckNode(childNode, searchText);
             }
         }
+
     }
 }
