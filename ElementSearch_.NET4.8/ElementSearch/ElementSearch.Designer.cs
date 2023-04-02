@@ -141,7 +141,7 @@ namespace ElementSearch
             // 
             // columnHeaderElementType
             // 
-            this.columnHeaderElementType.Text = "Elem Type";
+            this.columnHeaderElementType.Text = "Element Type";
             this.columnHeaderElementType.Width = 100;
             // 
             // columnHeaderChannel

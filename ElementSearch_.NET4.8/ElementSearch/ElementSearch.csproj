@@ -47,7 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Description.cs" />
-    <Compile Include="ElementDataModel.cs" />
+    <Compile Include="ElementData.cs" />
     <Compile Include="ElementSearch.cs">
       <SubType>Form</SubType>
     </Compile>

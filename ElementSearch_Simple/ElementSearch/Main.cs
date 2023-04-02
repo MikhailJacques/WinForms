@@ -6,11 +6,8 @@ using System.Windows.Forms;
 
 namespace ElementSearch
 {
-    internal static class Main
+    internal static class MainProgram
     {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
         [STAThread]
         static void Main()
         {

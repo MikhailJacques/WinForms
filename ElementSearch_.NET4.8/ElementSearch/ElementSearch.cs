@@ -19,7 +19,7 @@ namespace ElementSearch
         private Dictionary<uint, string> _elementTypeById = new Dictionary<uint, string>();
         private Dictionary<uint, string> _channelById = new Dictionary<uint, string>();
         private Dictionary<uint, string> _databaseById = new Dictionary<uint, string>();
-        private Dictionary<uint, ElementDataModel> _elementDataById = new Dictionary<uint, ElementDataModel>();
+        private Dictionary<uint, ElementData> _elementDataById = new Dictionary<uint, ElementData>();
 
         //private Dictionary<uint, NamedEntity> _elementTypeDataById = new Dictionary<uint, NamedEntity>();
         //private Dictionary<uint, NamedEntity> _channelDataById = new Dictionary<uint, NamedEntity>();
@@ -55,7 +55,7 @@ namespace ElementSearch
                     uint.TryParse(lineTokens[0], out uint id);
                     uint.TryParse(lineTokens[7], out uint handle);
 
-                    _elementDataById[id] = new ElementDataModel
+                    _elementDataById[id] = new ElementData
                     {
                         ID = id,
                         LongName = lineTokens[1],
@@ -288,7 +288,7 @@ namespace ElementSearch
         //    {
         //        if (allCheckedNodeIds.Contains(id))
         //        {
-        //            ElementDataModel elementData = _elementDataById[id];
+        //            ElementData elementData = _elementDataById[id];
 
         //            ListViewItem newItem = new ListViewItem(elementData.ID.ToString());
         //            newItem.SubItems.Add(elementData.LongName);
@@ -320,7 +320,7 @@ namespace ElementSearch
             {
                 if (allCheckedNodeIds.Contains(id))
                 {
-                    ElementDataModel elementData = _elementDataById[id];
+                    ElementData elementData = _elementDataById[id];
 
                     ListViewItem newItem = new ListViewItem(elementData.ID.ToString());
                     newItem.SubItems.Add(elementData.LongName);
