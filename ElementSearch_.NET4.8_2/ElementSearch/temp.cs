@@ -11,13 +11,13 @@
 //    {
 //        private TreeView treeViewDatabase;
 //        private ListView listViewElements;
-//        private Dictionary<uint, ElementData> elementDataDict;
+//        private Dictionary<uint, ElementData> elementDataById;
 
 //        public ElementSearch()
 //        {
 //            InitializeComponent();
 //            InitializeTreeViewAndListView();
-//            LoadTreeViewData();
+//            LoadData();
 //            LoadListViewData();
 //            AddTreeViewEventHandlers();
 //        }
@@ -31,7 +31,7 @@
 //            // Add treeViewDatabase and listViewElements to the form's Controls collection
 //        }
 
-//        private void LoadTreeViewData()
+//        private void LoadData()
 //        {
 //            string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
 //            string databaseFilePath = Path.Combine(projectDirectory, "data", "_lst_LogData_dbs.txt");
@@ -56,7 +56,7 @@
 //            string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
 //            string elementDataFilePath = Path.Combine(projectDirectory, "data", "_lst_LogData_elm_all.txt");
 
-//            elementDataDict = new Dictionary<uint, ElementData>();
+//            elementDataById = new Dictionary<uint, ElementData>();
 
 //            using (StreamReader reader = new StreamReader(elementDataFilePath))
 //            {
@@ -76,7 +76,7 @@
 //                        Handle = uint.Parse(tokens[7])
 //                    };
 
-//                    elementDataDict[element.ID] = element;
+//                    elementDataById[element.ID] = element;
 //                }
 //            }
 //        }
@@ -87,7 +87,7 @@
 //            {
 //                if (e.Node is MyTreeNode myNode)
 //                {
-//                    if (elementDataDict.TryGetValue(myNode._ID, out ElementData element))
+//                    if (elementDataById.TryGetValue(myNode._ID, out ElementData element))
 //                    {
 //                        if (e.Node.Checked)
 //                        {
@@ -246,7 +246,7 @@
 //            if (node.Checked)
 //            {
 //                // Find the element data in the collection based on the node's ID
-//                ElementData elementData = elementDataDict.FirstOrDefault(el => el.Value.ID == nodeId).Value;
+//                ElementData elementData = elementDataById.FirstOrDefault(el => el.Value.ID == nodeId).Value;
 
 //                if (elementData != null)
 //                {
@@ -286,7 +286,7 @@
 //    {
 //        if (e.Node is MyTreeNode myNode)
 //        {
-//            if (elementDataDict.TryGetValue(myNode._ID, out ElementData element))
+//            if (elementDataById.TryGetValue(myNode._ID, out ElementData element))
 //            {
 //                if (e.Node.Checked)
 //                {
@@ -300,4 +300,156 @@
 //        }
 //    };
 //}
+
+//private void AddTreeViewEventHandlers()
+//{
+//    treeViewDatabase.AfterCheck += (sender, e) =>
+//    {
+//        if (e.Node is MyTreeNode myNode)
+//        {
+//            UpdateChildNodesCheckedState(e.Node, e.Node.Checked);
+
+//            if (elementDataById.TryGetValue(myNode._ID, out ElementData element))
+//            {
+//                if (e.Node.Checked)
+//                {
+//                    AddElementToListView(element);
+//                }
+//                else
+//                {
+//                    RemoveElementFromListView(element.ID);
+//                }
+//            }
+//        }
+//    };
+//}
+
+//private void AddTreeViewEventHandlers()
+//{
+//    treeViewDatabase.AfterCheck += (sender, e) =>
+//    {
+//        if (isUpdating) // Check if it's updating
+//        {
+//            return;
+//        }
+
+//        if (e.Node is MyTreeNode myNode)
+//        {
+//            isUpdating = true; // Set the flag to true before updating
+//            UpdateChildNodesCheckedState(e.Node, e.Node.Checked);
+//            isUpdating = false; // Set the flag to false after updating
+
+//            if (elementDataById.TryGetValue(myNode._ID, out ElementData element))
+//            {
+//                if (e.Node.Checked)
+//                {
+//                    AddElementToListView(element);
+//                }
+//                else
+//                {
+//                    RemoveElementFromListView(element.ID);
+//                }
+//            }
+//        }
+//    };
+//}
+
+//private void LoadListViewData()
+//{
+//    string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
+//    string elementDataFilePath = Path.Combine(projectDirectory, "data", "_lst_LogData_element_all.txt");
+
+//    elementDataById = new Dictionary<uint, ElementData>();
+
+//    using (StreamReader reader = new StreamReader(elementDataFilePath))
+//    {
+//        string line;
+//        while ((line = reader.ReadLine()) != null)
+//        {
+//            var tokens = line.Split('@');
+//            var element = new ElementData
+//            {
+//                ID = uint.Parse(tokens[0]),
+//                LongName = tokens[1],
+//                ShortName = tokens[2],
+//                ElementType = tokens[3],
+//                Channel = tokens[4],
+//                Database = tokens[5],
+//                Location = tokens[6],
+//                Handle = uint.Parse(tokens[7])
+//            };
+
+//            elementDataById[element.ID] = element;
+//        }
+//    }
+//}
+
+//private void SearchAndCheckNode(TreeNode node, string searchText)
+//{
+//    if (node.Text.Contains(searchText))
+//    {
+//        node.Checked = true;
+//        uint nodeId = ((MyTreeNode)node)._ID;
+//        AddNodeDataToListView(nodeId);
+//    }
+//    else
+//    {
+//        node.Checked = false;
+//    }
+
+//    foreach (TreeNode childNode in node.Nodes)
+//    {
+//        SearchAndCheckNode(childNode, searchText);
+//    }
+//}
+
+
+//private void AddNode(TreeNodeCollection nodes, List<MyTreeNode> family, int index, Dictionary<string, MyTreeNode> nodeLookup)
+//{
+//    if (index < family.Count)
+//    {
+//        var currentRelative = family[index];
+//        var currentNodeKey = currentRelative.Text;
+
+//        if (!nodeLookup.TryGetValue(currentNodeKey, out MyTreeNode currentNode))
+//        {
+//            currentNode = currentRelative;
+//            nodes.Add(currentNode);
+//            nodeLookup[currentNodeKey] = currentNode;
+//        }
+
+//        AddNode(currentNode.Nodes, family, index + 1, nodeLookup);
+//    }
+//}
+
+
+//private async void buttonSend_Click(object sender, EventArgs e)
+//{
+//    string selectedElementIDs = string.Join(",", listViewElements.SelectedItems.Cast<ListViewItem>().Select(item => item.SubItems[0].Text));
+
+//    await Task.Run(() => SendDataToPipe(selectedElementIDs));
+//}
+
+//private void SendDataToPipe(string data)
+//{
+//    string pipeName = "Pipe_Element_ID";
+//    using (NamedPipeClientStream pipeClient = new NamedPipeClientStream(".", pipeName, PipeDirection.Out))
+//    {
+//        try
+//        {
+//            pipeClient.Connect(3000);
+
+//            using (StreamWriter sw = new StreamWriter(pipeClient, Encoding.ASCII))
+//            {
+//                sw.WriteLine(data);
+//                sw.Flush();
+//            }
+//        }
+//        catch (TimeoutException)
+//        {
+//            MessageBox.Show("The receiving application is not running.", "Connection Timeout", MessageBoxButtons.OK, MessageBoxIcon.Error);
+//        }
+//    }
+//}
+
 

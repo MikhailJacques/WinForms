@@ -29,12 +29,12 @@ namespace ElementSearch
         {
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory)?.Parent?.Parent?.FullName ?? Environment.CurrentDirectory;
 
-            string elmentTypeFilePath = Path.Combine(projectDirectory, "data", "_lst_LogData_elm_type.txt");
+            string elementTypeFilePath = Path.Combine(projectDirectory, "data", "_lst_LogData_elm_type.txt");
             string channelFilePath = Path.Combine(projectDirectory, "data", "_lst_LogData_chn.txt");
             string databaseFilePath = Path.Combine(projectDirectory, "data", "_lst_LogData_dbs.txt");
             string elementDataFilePath = Path.Combine(projectDirectory, "data", "_lst_LogData_elm_all.txt");
 
-            string[] filesPaths = { elmentTypeFilePath, channelFilePath, databaseFilePath, elementDataFilePath };
+            string[] filesPaths = { elementTypeFilePath, channelFilePath, databaseFilePath, elementDataFilePath };
 
             var fileTokens = filesPaths.Select(ReadTextFile).ToArray();
 
@@ -85,18 +85,6 @@ namespace ElementSearch
                 dict[id] = lineTokens[1];
             }
         }
-
-        //private void FillDictionaries(Dictionary<uint, NamedEntity> dictionary, IReadOnlyList<List<string>> fileTokens)
-        //{
-        //    foreach (var tokens in fileTokens)
-        //    {
-        //        if (tokens.Count < 2)
-        //            continue;
-
-        //        uint.TryParse(tokens[0], out uint id);
-        //        dictionary[id] = new NamedEntity { ID = id, Name = tokens[1] };
-        //    }
-        //}
 
         private List<List<string>> ReadTextFile(string filePath)
         {
@@ -274,38 +262,6 @@ namespace ElementSearch
             return checkedNodes;
         }
 
-        //private void UpdateListView()
-        //{
-        //    listViewElements.Items.Clear();
-
-        //    var checkedElemTypeNodes = GetCheckedNodes(treeViewElementType.Nodes).OfType<TreeNode>().ToList();
-        //    var checkedChannelNodes = GetCheckedNodes(treeViewChannel.Nodes).OfType<TreeNode>().ToList();
-        //    var checkedDatabaseNodes = GetCheckedNodes(treeViewDatabase.Nodes).OfType<TreeNode>().ToList();
-
-        //    var allCheckedNodeIds = new HashSet<uint>(checkedElemTypeNodes.Concat(checkedChannelNodes).Concat(checkedDatabaseNodes).Select(node => (node.Tag as MyTreeNode)?._ID ?? 0));
-
-        //    foreach (var id in _elementDataById.Keys)
-        //    {
-        //        if (allCheckedNodeIds.Contains(id))
-        //        {
-        //            ElementData elementData = _elementDataById[id];
-
-        //            ListViewItem newItem = new ListViewItem(elementData.ID.ToString());
-        //            newItem.SubItems.Add(elementData.LongName);
-        //            newItem.SubItems.Add(elementData.ShortName);
-
-        //            newItem.SubItems.Add(uint.TryParse(elementData.ElementType, out uint elementTypeID) && _elementTypeById.TryGetValue(elementTypeID, out string elementType) ? elementType : elementData.ElementType);
-        //            newItem.SubItems.Add(uint.TryParse(elementData.Channel, out uint channelID) && _channelById.TryGetValue(channelID, out string channel) ? channel : elementData.Channel);
-        //            newItem.SubItems.Add(uint.TryParse(elementData.Database, out uint databaseID) && _databaseById.TryGetValue(databaseID, out string database) ? database : elementData.Database);
-
-        //            newItem.SubItems.Add(elementData.Location);
-        //            newItem.SubItems.Add(elementData.Handle.ToString());
-
-        //            listViewElements.Items.Add(newItem);
-        //        }
-        //    }
-        //}
-
         private void UpdateListView()
         {
             listViewElements.Items.Clear();
@@ -373,13 +329,6 @@ namespace ElementSearch
             return foundNode;
         }
 
-        //private bool FindNodesByName(Dictionary<uint, ElementTypeData> data, string nameToFind)
-        //{
-        //    var foundItems = data.Values.Where(d => d.Name.IndexOf(nameToFind, StringComparison.OrdinalIgnoreCase) >= 0).Select(d => d.ID).ToList();
-
-        //    return foundItems;
-        //}
-
         private void ClearTreeView(TreeView treeView)
         {
             foreach (TreeNode node in treeView.Nodes)
@@ -418,23 +367,6 @@ namespace ElementSearch
                 }
             }
         }
-
-        //private void textBoxElementType_KeyDown(object sender, KeyEventArgs e)
-        //{
-        //    if (e.KeyCode == Keys.Enter)
-        //    {
-        //        e.Handled = true;
-        //        e.SuppressKeyPress = true;
-
-        //        string elemTypeToFind = textBoxElementType.Text;
-        //        if (elemTypeToFind.Length >= 3)
-        //        {
-        //            var foundIds = FindNodesByName(_elementTypeDataById, elemTypeToFind);
-        //            UpdateTreeView(treeViewElementType, foundIds);
-        //            UpdateListView();
-        //        }
-        //    }
-        //}
 
         private void UpdateTreeView(TreeView treeView, List<uint> idsToDisplay)
         {

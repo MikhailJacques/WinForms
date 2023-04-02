@@ -16,7 +16,7 @@ namespace ElementSearch
             _ID = 0;
         }
 
-        public MyTreeNode(string text, uint id, uint handle) : base(text)
+        public MyTreeNode(string text, uint id) : base(text)
         {
             _ID = id;
         }
