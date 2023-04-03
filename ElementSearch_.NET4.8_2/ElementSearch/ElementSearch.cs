@@ -11,18 +11,22 @@ namespace ElementSearch
 {
     public partial class ElementSearch : Form
     {
-        private bool isUpdating = false;
-        private Dictionary<uint, ElementData> elementDataById = new Dictionary<uint, ElementData>();
+        private bool isClearingTreeView = false;
+        private bool isTreeViewUpdating = false;
+        private ListViewColumnSorter listViewColumnSorter;
         private Dictionary<uint, string> elementTypeById = new Dictionary<uint, string>();
         private Dictionary<uint, string> channelById = new Dictionary<uint, string>();
         private Dictionary<uint, string> databaseById = new Dictionary<uint, string>();
+        private Dictionary<uint, ElementData> elementDataById = new Dictionary<uint, ElementData>();
+        private HashSet<string> uniqueElementIDs = new HashSet<string>();
 
         public ElementSearch()
         {
             InitializeComponent();
             LoadData();
-            AddTreeViewEventHandlers();
+            InitializeSorter();
         }
+
         private void LoadData()
         {
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
@@ -68,6 +72,13 @@ namespace ElementSearch
                 FillDictionaries(channelById, fileTokens[1]);
                 FillDictionaries(databaseById, fileTokens[2]);
             });
+        }
+
+        private void InitializeSorter()
+        {
+            listViewColumnSorter = new ListViewColumnSorter();
+            listViewColumnSorter.NumericColumns.Add(0);
+            listViewElements.ListViewItemSorter = listViewColumnSorter;
         }
 
         private void FillDictionaries(Dictionary<uint, string> dict, List<List<string>> fileTokens)
@@ -144,57 +155,6 @@ namespace ElementSearch
             }
         }
 
-        private void AddTreeViewEventHandlers()
-        {
-            treeViewElementType.AfterCheck += (sender, e) =>
-            {
-                if (isUpdating)
-                {
-                    return;
-                }
-
-                if (e.Node is MyTreeNode myNode)
-                {
-                    isUpdating = true;
-                    UpdateChildNodesCheckedState(e.Node, e.Node.Checked);
-                    UpdateListViewForNodeHierarchy(e.Node, e.Node.Checked);
-                    isUpdating = false;
-                }
-            };
-
-            treeViewChannel.AfterCheck += (sender, e) =>
-            {
-                if (isUpdating)
-                {
-                    return;
-                }
-
-                if (e.Node is MyTreeNode myNode)
-                {
-                    isUpdating = true;
-                    UpdateChildNodesCheckedState(e.Node, e.Node.Checked);
-                    UpdateListViewForNodeHierarchy(e.Node, e.Node.Checked);
-                    isUpdating = false;
-                }
-            };
-
-            treeViewDatabase.AfterCheck += (sender, e) =>
-            {
-                if (isUpdating)
-                {
-                    return;
-                }
-
-                if (e.Node is MyTreeNode myNode)
-                {
-                    isUpdating = true;
-                    UpdateChildNodesCheckedState(e.Node, e.Node.Checked);
-                    UpdateListViewForNodeHierarchy(e.Node, e.Node.Checked);
-                    isUpdating = false;
-                }
-            };
-        }
-
         private void UpdateChildNodesCheckedState(TreeNode parentNode, bool isChecked)
         {
             foreach (TreeNode childNode in parentNode.Nodes)
@@ -219,7 +179,7 @@ namespace ElementSearch
                     {
                         if (isChecked)
                         {
-                            AddElementToListView(element);
+                            AddElementToListView(element.ID);
                         }
                         else
                         {
@@ -235,20 +195,23 @@ namespace ElementSearch
             }
         }
 
-        private void AddElementToListView(ElementData element)
+        private void AddElementToListView(uint nodeId)
         {
-            var item = new ListViewItem(element.ID.ToString());
-            item.SubItems.Add(element.LongName);
-            item.SubItems.Add(element.ShortName);
-
-            item.SubItems.Add(elementTypeById.ContainsKey(element.ElementType) ? elementTypeById[element.ElementType] : string.Empty);
-            item.SubItems.Add(channelById.ContainsKey(element.Channel) ? channelById[element.Channel] : string.Empty);
-            item.SubItems.Add(databaseById.ContainsKey(element.Database) ? databaseById[element.Database] : string.Empty);
-
-            item.SubItems.Add(element.Location);
-            item.SubItems.Add(element.Handle.ToString());
-
-            listViewElements.Items.Add(item);
+            if (elementDataById.TryGetValue(nodeId, out ElementData elementData))
+            {
+                if (uniqueElementIDs.Add(nodeId.ToString()))
+                {
+                    ListViewItem listViewItem = new ListViewItem(elementData.ID.ToString());
+                    listViewItem.SubItems.Add(elementData.LongName);
+                    listViewItem.SubItems.Add(elementData.ShortName);
+                    listViewItem.SubItems.Add(elementTypeById.ContainsKey(elementData.ElementType) ? elementTypeById[elementData.ElementType] : string.Empty);
+                    listViewItem.SubItems.Add(channelById.ContainsKey(elementData.Channel) ? channelById[elementData.Channel] : string.Empty);
+                    listViewItem.SubItems.Add(databaseById.ContainsKey(elementData.Database) ? databaseById[elementData.Database] : string.Empty);
+                    listViewItem.SubItems.Add(elementData.Location);
+                    listViewItem.SubItems.Add(elementData.Handle.ToString());
+                    listViewElements.Items.Add(listViewItem);
+                }
+            }
         }
 
         private void RemoveElementFromListView(uint id)
@@ -267,41 +230,16 @@ namespace ElementSearch
             if (itemToRemove != null)
             {
                 listViewElements.Items.Remove(itemToRemove);
+                uniqueElementIDs.Remove(id.ToString());
             }
         }
 
-        private void AddNodeDataToListView(uint nodeId)
+        private void SetTreeViewNodeCheckState(TreeNodeCollection nodes, bool checkState)
         {
-            if (elementDataById.TryGetValue(nodeId, out ElementData elementData))
+            foreach (TreeNode node in nodes)
             {
-                ListViewItem listViewItem = new ListViewItem(elementData.ID.ToString());
-                listViewItem.SubItems.Add(elementData.LongName);
-                listViewItem.SubItems.Add(elementData.ShortName);
-                listViewItem.SubItems.Add(elementTypeById.ContainsKey(elementData.ElementType) ? elementTypeById[elementData.ElementType] : string.Empty);
-                listViewItem.SubItems.Add(channelById.ContainsKey(elementData.Channel) ? channelById[elementData.Channel] : string.Empty);
-                listViewItem.SubItems.Add(databaseById.ContainsKey(elementData.Database) ? databaseById[elementData.Database] : string.Empty);
-                listViewItem.SubItems.Add(elementData.Location);
-                listViewItem.SubItems.Add(elementData.Handle.ToString());
-                listViewElements.Items.Add(listViewItem);
-            }
-        }
-
-        private void RemoveNodeDataFromListView(uint nodeId)
-        {
-            ListViewItem itemToRemove = null;
-
-            foreach (ListViewItem listViewItem in listViewElements.Items)
-            {
-                if (listViewItem.Text == nodeId.ToString())
-                {
-                    itemToRemove = listViewItem;
-                    break;
-                }
-            }
-
-            if (itemToRemove != null)
-            {
-                listViewElements.Items.Remove(itemToRemove);
+                node.Checked = checkState;
+                SetTreeViewNodeCheckState(node.Nodes, checkState);
             }
         }
 
@@ -315,12 +253,82 @@ namespace ElementSearch
 
         private void UncheckAndCollapseNodes(TreeNode parentNode)
         {
+            isClearingTreeView = true;
             parentNode.Checked = false;
+            isClearingTreeView = false;
+
             parentNode.Collapse();
 
             foreach (TreeNode childNode in parentNode.Nodes)
             {
                 UncheckAndCollapseNodes(childNode);
+            }
+        }
+
+        private void SearchAndCheckNode(TreeNode node, string searchText, bool check, bool forceCheck = false)
+        {
+            string nodeTextLower = node.Text.ToLower();
+            string searchTextLower = searchText.ToLower();
+
+            if (nodeTextLower.Contains(searchTextLower) || searchText == "" || forceCheck)
+            {
+                if ((check && !node.Checked) || (!check && node.Checked) || forceCheck)
+                {
+                    node.Checked = check;
+                    uint nodeId = ((MyTreeNode)node)._ID;
+
+                    if (check)
+                    {
+                        AddElementToListView(nodeId);
+                    }
+                    else
+                    {
+                        RemoveElementFromListView(nodeId);
+                    }
+                }
+
+                TreeNode currentNode = node;
+                while (currentNode.Parent != null)
+                {
+                    currentNode.Parent.Expand();
+                    currentNode = currentNode.Parent;
+                }
+            }
+
+            foreach (TreeNode childNode in node.Nodes)
+            {
+                SearchAndCheckNode(childNode, searchText, check, forceCheck);
+            }
+        }
+
+        private void TextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                var textBox = sender as TextBox;
+                string searchText = textBox.Text;
+                TreeView targetTreeView = null;
+
+                if (textBox == textBoxElementType)
+                {
+                    targetTreeView = treeViewElementType;
+                }
+                else if (textBox == textBoxChannel)
+                {
+                    targetTreeView = treeViewChannel;
+                }
+                else if (textBox == textBoxDatabase)
+                {
+                    targetTreeView = treeViewDatabase;
+                }
+
+                if (searchText.Length >= 3 && targetTreeView != null)
+                {
+                    foreach (TreeNode node in targetTreeView.Nodes)
+                    {
+                        SearchAndCheckNode(node, searchText, true);
+                    }
+                }
             }
         }
 
@@ -356,6 +364,28 @@ namespace ElementSearch
             }
         }
 
+        private void listViewElements_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            if (e.Column == listViewColumnSorter.Column)
+            {
+                if (listViewColumnSorter.Order == SortOrder.Ascending)
+                {
+                    listViewColumnSorter.Order = SortOrder.Descending;
+                }
+                else
+                {
+                    listViewColumnSorter.Order = SortOrder.Ascending;
+                }
+            }
+            else
+            {
+                listViewColumnSorter.Column = e.Column;
+                listViewColumnSorter.Order = SortOrder.Ascending;
+            }
+
+            listViewElements.Sort();
+        }
+
         private void buttonClear_Click(object sender, EventArgs e)
         {
             textBoxElementType.Clear();
@@ -363,10 +393,16 @@ namespace ElementSearch
             textBoxDatabase.Clear();
             textBoxElementName.Clear();
 
+            checkBoxElementType.Checked = false;
+            checkBoxChannel.Checked = false;
+            checkBoxDatabase.Checked = false;
+            checkBoxElements.Checked = false;
+
             ClearTreeView(treeViewElementType);
             ClearTreeView(treeViewChannel);
             ClearTreeView(treeViewDatabase);
 
+            uniqueElementIDs.Clear();
             listViewElements.Items.Clear();
         }
 
@@ -374,22 +410,22 @@ namespace ElementSearch
         {
             string selectedElementIDs = string.Join(",", listViewElements.SelectedItems.Cast<ListViewItem>().Select(item => item.SubItems[0].Text));
 
-            await Task.Run(() => SendDataToPipe(selectedElementIDs));
+            await SendDataToPipeAsync(selectedElementIDs);
         }
 
-        private void SendDataToPipe(string data)
+        private async Task SendDataToPipeAsync(string data)
         {
             string pipeName = "Pipe_Element_ID";
             using (NamedPipeClientStream pipeClient = new NamedPipeClientStream(".", pipeName, PipeDirection.Out))
             {
                 try
                 {
-                    pipeClient.Connect(3000);
+                    await pipeClient.ConnectAsync(3000);
 
                     using (StreamWriter sw = new StreamWriter(pipeClient, Encoding.ASCII))
                     {
-                        sw.WriteLine(data);
-                        sw.Flush();
+                        await sw.WriteLineAsync(data);
+                        await sw.FlushAsync();
                     }
                 }
                 catch (TimeoutException)
@@ -399,16 +435,34 @@ namespace ElementSearch
             }
         }
 
+        private void checkBoxElementType_CheckedChanged(object sender, EventArgs e)
+        {
+            SetTreeViewNodeCheckState(treeViewElementType.Nodes, checkBoxElementType.Checked);
+        }
+
+        private void checkBoxChannel_CheckedChanged(object sender, EventArgs e)
+        {
+            SetTreeViewNodeCheckState(treeViewChannel.Nodes, checkBoxChannel.Checked);
+        }
+
+        private void checkBoxDatabase_CheckedChanged(object sender, EventArgs e)
+        {
+            SetTreeViewNodeCheckState(treeViewDatabase.Nodes, checkBoxDatabase.Checked);
+        }
+
         private void textBoxElementType_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+
                 string searchText = textBoxElementType.Text;
                 if (searchText.Length >= 3)
                 {
                     foreach (TreeNode node in treeViewElementType.Nodes)
                     {
-                        SearchAndCheckNode(node, searchText);
+                        SearchAndCheckNode(node, searchText, true);
                     }
                 }
             }
@@ -418,12 +472,15 @@ namespace ElementSearch
         {
             if (e.KeyCode == Keys.Enter)
             {
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+
                 string searchText = textBoxChannel.Text;
                 if (searchText.Length >= 3)
                 {
                     foreach (TreeNode node in treeViewChannel.Nodes)
                     {
-                        SearchAndCheckNode(node, searchText);
+                        SearchAndCheckNode(node, searchText, true);
                     }
                 }
             }
@@ -433,44 +490,99 @@ namespace ElementSearch
         {
             if (e.KeyCode == Keys.Enter)
             {
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+
                 string searchText = textBoxDatabase.Text;
                 if (searchText.Length >= 3)
                 {
                     foreach (TreeNode node in treeViewDatabase.Nodes)
                     {
-                        SearchAndCheckNode(node, searchText);
+                        SearchAndCheckNode(node, searchText, true);
                     }
                 }
             }
         }
 
-        private void SearchAndCheckNode(TreeNode node, string searchText)
+        private void treeViewElementType_AfterCheck(object sender, TreeViewEventArgs e)
         {
-            string nodeTextLower = node.Text.ToLower();
-            string searchTextLower = searchText.ToLower();
+            TreeView_AfterCheck(sender, e);
+        }
 
-            if (nodeTextLower.Contains(searchTextLower))
+        private void treeViewChannel_AfterCheck(object sender, TreeViewEventArgs e)
+        {
+            TreeView_AfterCheck(sender, e);
+        }
+
+        private void treeViewDatabase_AfterCheck(object sender, TreeViewEventArgs e)
+        {
+            TreeView_AfterCheck(sender, e);
+        }
+
+        private void TreeView_AfterCheck(object sender, TreeViewEventArgs e)
+        {
+            if (isTreeViewUpdating || isClearingTreeView)
             {
-                if (!node.Checked)
-                {
-                    node.Checked = true;
-                    uint nodeId = ((MyTreeNode)node)._ID;
-                    AddNodeDataToListView(nodeId);
-                }
-
-                TreeNode currentNode = node;
-                while (currentNode.Parent != null)
-                {
-                    currentNode.Parent.Expand();
-                    currentNode = currentNode.Parent;
-                }
+                return;
             }
 
-            foreach (TreeNode childNode in node.Nodes)
+            if (e.Node is MyTreeNode myNode)
             {
-                SearchAndCheckNode(childNode, searchText);
+                isTreeViewUpdating = true;
+                UpdateChildNodesCheckedState(e.Node, e.Node.Checked);
+                UpdateListViewForNodeHierarchy(e.Node, e.Node.Checked);
+                SearchAndCheckNode(e.Node, "", e.Node.Checked, true);
+                isTreeViewUpdating = false;
             }
         }
 
+        private void checkBoxElements_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxElements.Checked)
+            {
+                // Store the selected items in a temporary list
+                List<string> selectedElementIds = new List<string>();
+                foreach (ListViewItem item in listViewElements.SelectedItems)
+                {
+                    selectedElementIds.Add(item.SubItems[0].Text);
+                }
+
+                // Clear the ListView and HashSet
+                listViewElements.Items.Clear();
+                uniqueElementIDs.Clear();
+
+                // Add only the selected items back to the ListView and HashSet
+                if (selectedElementIds.Count > 0)
+                {
+                    foreach (string selectedElementId in selectedElementIds)
+                    {
+                        uint nodeId = uint.Parse(selectedElementId);
+                        AddElementToListView(nodeId);
+                    }
+                }
+            }
+            else
+            {
+                // Clear the ListView and HashSet
+                listViewElements.Items.Clear();
+                uniqueElementIDs.Clear();
+
+                // Restore the ListView to its original state (all items)
+                foreach (TreeNode node in treeViewElementType.Nodes)
+                {
+                    UpdateListViewForNodeHierarchy(node, true);
+                }
+
+                foreach (TreeNode node in treeViewChannel.Nodes)
+                {
+                    UpdateListViewForNodeHierarchy(node, true);
+                }
+
+                foreach (TreeNode node in treeViewDatabase.Nodes)
+                {
+                    UpdateListViewForNodeHierarchy(node, true);
+                }
+            }
+        }
     }
 }

@@ -54,6 +54,7 @@
     <Compile Include="ElementSearch.Designer.cs">
       <DependentUpon>ElementSearch.cs</DependentUpon>
     </Compile>
+    <Compile Include="ListViewColumnSorter.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="MyTreeNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -478,3 +478,417 @@
 //}
 
 
+//private void AddTreeViewEventHandlers()
+//{
+//    treeViewElementType.AfterCheck += (sender, e) =>
+//    {
+//        if (isUpdating)
+//        {
+//            return;
+//        }
+
+//        if (e.Node is MyTreeNode myNode)
+//        {
+//            isUpdating = true;
+//            UpdateChildNodesCheckedState(e.Node, e.Node.Checked);
+//            UpdateListViewForNodeHierarchy(e.Node, e.Node.Checked);
+//            isUpdating = false;
+//        }
+//    };
+
+//    treeViewChannel.AfterCheck += (sender, e) =>
+//    {
+//        if (isUpdating)
+//        {
+//            return;
+//        }
+
+//        if (e.Node is MyTreeNode myNode)
+//        {
+//            isUpdating = true;
+//            UpdateChildNodesCheckedState(e.Node, e.Node.Checked);
+//            UpdateListViewForNodeHierarchy(e.Node, e.Node.Checked);
+//            isUpdating = false;
+//        }
+//    };
+
+//    treeViewDatabase.AfterCheck += (sender, e) =>
+//    {
+//        if (isUpdating)
+//        {
+//            return;
+//        }
+
+//        if (e.Node is MyTreeNode myNode)
+//        {
+//            isUpdating = true;
+//            UpdateChildNodesCheckedState(e.Node, e.Node.Checked);
+//            UpdateListViewForNodeHierarchy(e.Node, e.Node.Checked);
+//            isUpdating = false;
+//        }
+//    };
+//}
+
+//private void AddNodeDataToListView(uint nodeId)
+//{
+//    if (elementDataById.TryGetValue(nodeId, out ElementData elementData))
+//    {
+//        ListViewItem listViewItem = new ListViewItem(elementData.ID.ToString());
+//        listViewItem.SubItems.Add(elementData.LongName);
+//        listViewItem.SubItems.Add(elementData.ShortName);
+//        listViewItem.SubItems.Add(elementTypeById.ContainsKey(elementData.ElementType) ? elementTypeById[elementData.ElementType] : string.Empty);
+//        listViewItem.SubItems.Add(channelById.ContainsKey(elementData.Channel) ? channelById[elementData.Channel] : string.Empty);
+//        listViewItem.SubItems.Add(databaseById.ContainsKey(elementData.Database) ? databaseById[elementData.Database] : string.Empty);
+//        listViewItem.SubItems.Add(elementData.Location);
+//        listViewItem.SubItems.Add(elementData.Handle.ToString());
+//        listViewElements.Items.Add(listViewItem);
+//    }
+//}
+
+//private void SearchAndCheckNode(TreeNode node, string searchText)
+//{
+//    string nodeTextLower = node.Text.ToLower();
+//    string searchTextLower = searchText.ToLower();
+
+//    if (nodeTextLower.Contains(searchTextLower))
+//    {
+//        if (!node.Checked)
+//        {
+//            node.Checked = true;
+//            uint nodeId = ((MyTreeNode)node)._ID;
+//            AddNodeDataToListView(nodeId);
+//        }
+
+//        TreeNode currentNode = node;
+//        while (currentNode.Parent != null)
+//        {
+//            currentNode.Parent.Expand();
+//            currentNode = currentNode.Parent;
+//        }
+//    }
+
+//    foreach (TreeNode childNode in node.Nodes)
+//    {
+//        SearchAndCheckNode(childNode, searchText);
+//    }
+//}
+
+//private void AddElementToListView(ElementData element)
+//{
+//    bool itemExists = false;
+
+//    foreach (ListViewItem item in listViewElements.Items)
+//    {
+//        if (item.SubItems[0].Text == element.ID.ToString())
+//        {
+//            itemExists = true;
+//            break;
+//        }
+//    }
+
+//    if (itemExists == false)
+//    {
+//        var item = new ListViewItem(element.ID.ToString());
+//        item.SubItems.Add(element.LongName);
+//        item.SubItems.Add(element.ShortName);
+
+//        item.SubItems.Add(elementTypeById.ContainsKey(element.ElementType) ? elementTypeById[element.ElementType] : string.Empty);
+//        item.SubItems.Add(channelById.ContainsKey(element.Channel) ? channelById[element.Channel] : string.Empty);
+//        item.SubItems.Add(databaseById.ContainsKey(element.Database) ? databaseById[element.Database] : string.Empty);
+
+//        item.SubItems.Add(element.Location);
+//        item.SubItems.Add(element.Handle.ToString());
+
+//        listViewElements.Items.Add(item);
+//    }
+//}
+
+//internal class ListViewColumnSorter : IComparer
+//{
+//    public int Column { get; set; }
+//    public SortOrder Order { get; set; }
+//    public HashSet<int> NumericColumns { get; set; }
+
+//    public ListViewColumnSorter()
+//    {
+//        Column = 0;
+//        Order = SortOrder.None;
+//        NumericColumns = new HashSet<int>();
+//    }
+
+//    public int Compare(object x, object y)
+//    {
+//        ListViewItem itemX = (ListViewItem)x;
+//        ListViewItem itemY = (ListViewItem)y;
+
+//        int compareResult;
+
+//        if (NumericColumns.Contains(Column))
+//        {
+//            // Compare as numbers
+//            int numericValueX = int.TryParse(itemX.SubItems[Column].Text, out int tempX) ? tempX : int.MinValue;
+//            int numericValueY = int.TryParse(itemY.SubItems[Column].Text, out int tempY) ? tempY : int.MinValue;
+//            compareResult = numericValueX.CompareTo(numericValueY);
+//        }
+//        else
+//        {
+//            // Compare as strings
+//            compareResult = string.Compare(itemX.SubItems[Column].Text, itemY.SubItems[Column].Text);
+//        }
+
+//        if (Order == SortOrder.Ascending)
+//        {
+//            return compareResult;
+//        }
+//        else if (Order == SortOrder.Descending)
+//        {
+//            return -compareResult;
+//        }
+//        else
+//        {
+//            return 0;
+//        }
+//    }
+//}
+
+//private bool ItemWithIDExists(uint nodeId)
+//{
+//    foreach (ListViewItem listViewItem in listViewElements.Items)
+//    {
+//        if (listViewItem.Text == nodeId.ToString())
+//        {
+//            return true;
+//        }
+//    }
+
+//    return false;
+//}
+
+
+//private void AddNodeDataToListView(uint nodeId)
+//{
+//    //if (elementDataById.TryGetValue(nodeId, out ElementData elementData) && !ItemWithIDExists(nodeId))
+//    if (elementDataById.TryGetValue(nodeId, out ElementData elementData))
+//    {
+//        if (uniqueElementIds.Add(nodeId.ToString()))
+//        {
+//            ListViewItem listViewItem = new ListViewItem(elementData.ID.ToString());
+//            listViewItem.SubItems.Add(elementData.LongName);
+//            listViewItem.SubItems.Add(elementData.ShortName);
+//            listViewItem.SubItems.Add(elementTypeById.ContainsKey(elementData.ElementType) ? elementTypeById[elementData.ElementType] : string.Empty);
+//            listViewItem.SubItems.Add(channelById.ContainsKey(elementData.Channel) ? channelById[elementData.Channel] : string.Empty);
+//            listViewItem.SubItems.Add(databaseById.ContainsKey(elementData.Database) ? databaseById[elementData.Database] : string.Empty);
+//            listViewItem.SubItems.Add(elementData.Location);
+//            listViewItem.SubItems.Add(elementData.Handle.ToString());
+//            listViewElements.Items.Add(listViewItem);
+//        }
+//    }
+//}
+
+//private void RemoveNodeDataFromListView(uint nodeId)
+//{
+//    ListViewItem itemToRemove = null;
+
+//    foreach (ListViewItem listViewItem in listViewElements.Items)
+//    {
+//        if (listViewItem.Text == nodeId.ToString())
+//        {
+//            itemToRemove = listViewItem;
+//            break;
+//        }
+//    }
+
+//    if (itemToRemove != null)
+//    {
+//        listViewElements.Items.Remove(itemToRemove);
+//        uniqueElementIds.Remove(nodeId.ToString());
+//    }
+//}
+
+//private void textBoxElementType_KeyDown(object sender, KeyEventArgs e)
+//{
+//    if (e.KeyCode == Keys.Enter)
+//    {
+//        string searchText = textBoxElementType.Text;
+//        if (searchText.Length >= 3)
+//        {
+//            foreach (TreeNode node in treeViewElementType.Nodes)
+//            {
+//                SearchAndCheckNode(node, searchText, true);
+//            }
+//        }
+//    }
+//}
+
+//private void textBoxChannel_KeyDown(object sender, KeyEventArgs e)
+//{
+//    if (e.KeyCode == Keys.Enter)
+//    {
+//        string searchText = textBoxChannel.Text;
+//        if (searchText.Length >= 3)
+//        {
+//            foreach (TreeNode node in treeViewChannel.Nodes)
+//            {
+//                SearchAndCheckNode(node, searchText, true);
+//            }
+//        }
+//    }
+//}
+
+//private void textBoxDatabase_KeyDown(object sender, KeyEventArgs e)
+//{
+//    if (e.KeyCode == Keys.Enter)
+//    {
+//        string searchText = textBoxDatabase.Text;
+//        if (searchText.Length >= 3)
+//        {
+//            foreach (TreeNode node in treeViewDatabase.Nodes)
+//            {
+//                SearchAndCheckNode(node, searchText, true);
+//            }
+//        }
+//    }
+//}
+
+//private void AddTreeViewEventHandlers()
+//{
+//    treeViewElementType.AfterCheck += (sender, e) =>
+//    {
+//        if (isUpdating)
+//        {
+//            return;
+//        }
+
+//        if (e.Node is MyTreeNode myNode)
+//        {
+//            isUpdating = true;
+//            UpdateChildNodesCheckedState(e.Node, e.Node.Checked);
+//            UpdateListViewForNodeHierarchy(e.Node, e.Node.Checked);
+//            SearchAndCheckNode(e.Node, "", e.Node.Checked, true);
+//            isUpdating = false;
+//        }
+//    };
+
+//    treeViewChannel.AfterCheck += (sender, e) =>
+//    {
+//        if (isUpdating)
+//        {
+//            return;
+//        }
+
+//        if (e.Node is MyTreeNode myNode)
+//        {
+//            isUpdating = true;
+//            UpdateChildNodesCheckedState(e.Node, e.Node.Checked);
+//            UpdateListViewForNodeHierarchy(e.Node, e.Node.Checked);
+//            SearchAndCheckNode(e.Node, "", e.Node.Checked, true);
+//            isUpdating = false;
+//        }
+//    };
+
+//    treeViewDatabase.AfterCheck += (sender, e) =>
+//    {
+//        if (isUpdating)
+//        {
+//            return;
+//        }
+
+//        if (e.Node is MyTreeNode myNode)
+//        {
+//            isUpdating = true;
+//            UpdateChildNodesCheckedState(e.Node, e.Node.Checked);
+//            UpdateListViewForNodeHierarchy(e.Node, e.Node.Checked);
+//            SearchAndCheckNode(e.Node, "", e.Node.Checked, true);
+//            isUpdating = false;
+//        }
+//    };
+//}
+
+//private void SendDataToPipe(string data)
+//{
+//    string pipeName = "Pipe_Element_ID";
+//    using (NamedPipeClientStream pipeClient = new NamedPipeClientStream(".", pipeName, PipeDirection.Out))
+//    {
+//        try
+//        {
+//            pipeClient.Connect(3000);
+
+//            using (StreamWriter sw = new StreamWriter(pipeClient, Encoding.ASCII))
+//            {
+//                sw.WriteLine(data);
+//                sw.Flush();
+//            }
+//        }
+//        catch (TimeoutException)
+//        {
+//            MessageBox.Show("The receiving application is not running.", "Connection Timeout", MessageBoxButtons.OK, MessageBoxIcon.Error);
+//        }
+//    }
+//}
+
+//private async void buttonSend_Click(object sender, EventArgs e)
+//{
+//    string selectedElementIDs = string.Join(",", listViewElements.SelectedItems.Cast<ListViewItem>().Select(item => item.SubItems[0].Text));
+
+//    await Task.Run(() => SendDataToPipe(selectedElementIDs));
+//}
+
+//private void checkBoxElements_CheckedChanged(object sender, EventArgs e)
+//{
+//    if (checkBoxElements.Checked)
+//    {
+//        // Store the selected items in a temporary list
+//        List<ListViewItem> selectedItems = new List<ListViewItem>();
+//        foreach (ListViewItem item in listViewElements.SelectedItems)
+//        {
+//            selectedItems.Add(item);
+//        }
+
+//        // Clear the ListView
+//        listViewElements.Items.Clear();
+
+//        // Add only the selected items back to the ListView
+//        if (selectedItems.Count > 0)
+//        {
+//            foreach (ListViewItem selectedItem in selectedItems)
+//            {
+//                listViewElements.Items.Add(selectedItem);
+//            }
+//        }
+//    }
+//    else
+//    {
+//        // Restore the ListView to its original state (all items)
+//        UpdateListViewForNodeHierarchy(treeViewElementType.Nodes, true);
+//        UpdateListViewForNodeHierarchy(treeViewChannel.Nodes, true);
+//        UpdateListViewForNodeHierarchy(treeViewDatabase.Nodes, true);
+//    }
+//}
+
+//private void TreeView_AfterCheck(object sender, TreeViewEventArgs e)
+//{
+//    if (isTreeViewUpdating)
+//    {
+//        return;
+//    }
+
+//    if (e.Node is MyTreeNode myNode)
+//    {
+//        isTreeViewUpdating = true;
+//        UpdateChildNodesCheckedState(e.Node, e.Node.Checked);
+//        UpdateListViewForNodeHierarchy(e.Node, e.Node.Checked);
+//        SearchAndCheckNode(e.Node, "", e.Node.Checked, true);
+//        isTreeViewUpdating = false;
+//    }
+//}
+
+//private void UncheckAndCollapseNodes(TreeNode parentNode)
+//{
+//    parentNode.Checked = false;
+//    parentNode.Collapse();
+
+//    foreach (TreeNode childNode in parentNode.Nodes)
+//    {
+//        UncheckAndCollapseNodes(childNode);
+//    }
+//}
