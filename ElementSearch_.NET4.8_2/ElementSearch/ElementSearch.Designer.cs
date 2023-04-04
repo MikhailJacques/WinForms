@@ -1,24 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿
 using System.Windows.Forms;
-using System.IO;
-using System.IO.Pipes;
-using System.Text;
 
 namespace ElementSearch
 {
     partial class ElementSearch : Form
     {
-        /// <summary>
         /// Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
         /// Clean up any resources being used.
-        /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
@@ -31,10 +21,7 @@ namespace ElementSearch
 
         #region Windows Form Designer generated code
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
+        /// Required method for Designer support - do not modify the contents of this method with the code editor.
         private void InitializeComponent()
         {
             this.treeViewElementType = new System.Windows.Forms.TreeView();
@@ -66,15 +53,20 @@ namespace ElementSearch
             // 
             // treeViewElementType
             // 
+            this.treeViewElementType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.treeViewElementType.CheckBoxes = true;
-            this.treeViewElementType.Location = new System.Drawing.Point(14, 35);
+            this.treeViewElementType.Location = new System.Drawing.Point(4, 35);
             this.treeViewElementType.Name = "treeViewElementType";
-            this.treeViewElementType.Size = new System.Drawing.Size(316, 220);
+            this.treeViewElementType.Size = new System.Drawing.Size(326, 224);
             this.treeViewElementType.TabIndex = 0;
             this.treeViewElementType.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.treeViewElementType_AfterCheck);
             // 
             // listViewElements
             // 
+            this.listViewElements.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.listViewElements.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeaderID,
             this.columnHeaderLongName,
@@ -88,7 +80,7 @@ namespace ElementSearch
             this.listViewElements.HideSelection = false;
             this.listViewElements.Location = new System.Drawing.Point(337, 35);
             this.listViewElements.Name = "listViewElements";
-            this.listViewElements.Size = new System.Drawing.Size(988, 724);
+            this.listViewElements.Size = new System.Drawing.Size(988, 728);
             this.listViewElements.TabIndex = 1;
             this.listViewElements.UseCompatibleStateImageBehavior = false;
             this.listViewElements.View = System.Windows.Forms.View.Details;
@@ -135,43 +127,47 @@ namespace ElementSearch
             // 
             // treeViewChannel
             // 
+            this.treeViewChannel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.treeViewChannel.CheckBoxes = true;
-            this.treeViewChannel.Location = new System.Drawing.Point(14, 287);
+            this.treeViewChannel.Location = new System.Drawing.Point(4, 287);
             this.treeViewChannel.Name = "treeViewChannel";
-            this.treeViewChannel.Size = new System.Drawing.Size(316, 220);
+            this.treeViewChannel.Size = new System.Drawing.Size(326, 224);
             this.treeViewChannel.TabIndex = 2;
             this.treeViewChannel.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.treeViewChannel_AfterCheck);
             // 
             // treeViewDatabase
             // 
+            this.treeViewDatabase.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.treeViewDatabase.CheckBoxes = true;
-            this.treeViewDatabase.Location = new System.Drawing.Point(14, 539);
+            this.treeViewDatabase.Location = new System.Drawing.Point(4, 539);
             this.treeViewDatabase.Name = "treeViewDatabase";
-            this.treeViewDatabase.Size = new System.Drawing.Size(316, 220);
+            this.treeViewDatabase.Size = new System.Drawing.Size(326, 224);
             this.treeViewDatabase.TabIndex = 3;
             this.treeViewDatabase.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.treeViewDatabase_AfterCheck);
             // 
             // textBoxElementType
             // 
-            this.textBoxElementType.Location = new System.Drawing.Point(170, 12);
+            this.textBoxElementType.Location = new System.Drawing.Point(139, 12);
             this.textBoxElementType.Name = "textBoxElementType";
-            this.textBoxElementType.Size = new System.Drawing.Size(160, 20);
+            this.textBoxElementType.Size = new System.Drawing.Size(191, 20);
             this.textBoxElementType.TabIndex = 4;
             this.textBoxElementType.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxElementType_KeyDown);
             // 
             // textBoxChannel
             // 
-            this.textBoxChannel.Location = new System.Drawing.Point(170, 261);
+            this.textBoxChannel.Location = new System.Drawing.Point(139, 261);
             this.textBoxChannel.Name = "textBoxChannel";
-            this.textBoxChannel.Size = new System.Drawing.Size(160, 20);
+            this.textBoxChannel.Size = new System.Drawing.Size(191, 20);
             this.textBoxChannel.TabIndex = 5;
             this.textBoxChannel.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxChannel_KeyDown);
             // 
             // textBoxDatabase
             // 
-            this.textBoxDatabase.Location = new System.Drawing.Point(170, 513);
+            this.textBoxDatabase.Location = new System.Drawing.Point(139, 513);
             this.textBoxDatabase.Name = "textBoxDatabase";
-            this.textBoxDatabase.Size = new System.Drawing.Size(160, 20);
+            this.textBoxDatabase.Size = new System.Drawing.Size(191, 20);
             this.textBoxDatabase.TabIndex = 6;
             this.textBoxDatabase.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxDatabase_KeyDown);
             // 
@@ -209,7 +205,7 @@ namespace ElementSearch
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.label1.Location = new System.Drawing.Point(82, 14);
+            this.label1.Location = new System.Drawing.Point(51, 13);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(82, 15);
             this.label1.TabIndex = 19;
@@ -219,7 +215,7 @@ namespace ElementSearch
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.label2.Location = new System.Drawing.Point(82, 263);
+            this.label2.Location = new System.Drawing.Point(51, 263);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(51, 15);
             this.label2.TabIndex = 20;
@@ -229,7 +225,7 @@ namespace ElementSearch
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.label3.Location = new System.Drawing.Point(82, 515);
+            this.label3.Location = new System.Drawing.Point(51, 518);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(58, 15);
             this.label3.TabIndex = 21;
@@ -238,7 +234,7 @@ namespace ElementSearch
             // checkBoxElementType
             // 
             this.checkBoxElementType.AutoSize = true;
-            this.checkBoxElementType.Location = new System.Drawing.Point(37, 15);
+            this.checkBoxElementType.Location = new System.Drawing.Point(26, 14);
             this.checkBoxElementType.Name = "checkBoxElementType";
             this.checkBoxElementType.Size = new System.Drawing.Size(15, 14);
             this.checkBoxElementType.TabIndex = 22;
@@ -248,7 +244,7 @@ namespace ElementSearch
             // checkBoxChannel
             // 
             this.checkBoxChannel.AutoSize = true;
-            this.checkBoxChannel.Location = new System.Drawing.Point(37, 264);
+            this.checkBoxChannel.Location = new System.Drawing.Point(26, 264);
             this.checkBoxChannel.Name = "checkBoxChannel";
             this.checkBoxChannel.Size = new System.Drawing.Size(15, 14);
             this.checkBoxChannel.TabIndex = 23;
@@ -258,7 +254,7 @@ namespace ElementSearch
             // checkBoxDatabase
             // 
             this.checkBoxDatabase.AutoSize = true;
-            this.checkBoxDatabase.Location = new System.Drawing.Point(37, 519);
+            this.checkBoxDatabase.Location = new System.Drawing.Point(26, 519);
             this.checkBoxDatabase.Name = "checkBoxDatabase";
             this.checkBoxDatabase.Size = new System.Drawing.Size(15, 14);
             this.checkBoxDatabase.TabIndex = 24;
@@ -279,7 +275,7 @@ namespace ElementSearch
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1328, 786);
+            this.ClientSize = new System.Drawing.Size(1328, 767);
             this.Controls.Add(this.checkBoxElements);
             this.Controls.Add(this.checkBoxDatabase);
             this.Controls.Add(this.checkBoxChannel);

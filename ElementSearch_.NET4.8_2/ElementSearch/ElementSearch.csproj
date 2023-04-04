@@ -59,6 +59,7 @@
     <Compile Include="MyTreeNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="temp.cs" />
+    <Compile Include="temp2.cs" />
     <EmbeddedResource Include="ElementSearch.resx">
       <DependentUpon>ElementSearch.cs</DependentUpon>
     </EmbeddedResource>
