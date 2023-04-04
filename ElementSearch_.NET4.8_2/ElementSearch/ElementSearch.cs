@@ -505,21 +505,6 @@ namespace ElementSearch
             }
         }
 
-        private void treeViewElementType_AfterCheck(object sender, TreeViewEventArgs e)
-        {
-            TreeView_AfterCheck(sender, e);
-        }
-
-        private void treeViewChannel_AfterCheck(object sender, TreeViewEventArgs e)
-        {
-            TreeView_AfterCheck(sender, e);
-        }
-
-        private void treeViewDatabase_AfterCheck(object sender, TreeViewEventArgs e)
-        {
-            TreeView_AfterCheck(sender, e);
-        }
-
         private void TreeView_AfterCheck(object sender, TreeViewEventArgs e)
         {
             if (isTreeViewUpdating || isClearingTreeView)

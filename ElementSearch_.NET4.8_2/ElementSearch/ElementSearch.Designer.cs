@@ -60,7 +60,7 @@ namespace ElementSearch
             this.treeViewElementType.Name = "treeViewElementType";
             this.treeViewElementType.Size = new System.Drawing.Size(326, 224);
             this.treeViewElementType.TabIndex = 0;
-            this.treeViewElementType.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.treeViewElementType_AfterCheck);
+            this.treeViewElementType.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.TreeView_AfterCheck); 
             // 
             // listViewElements
             // 
@@ -134,7 +134,7 @@ namespace ElementSearch
             this.treeViewChannel.Name = "treeViewChannel";
             this.treeViewChannel.Size = new System.Drawing.Size(326, 224);
             this.treeViewChannel.TabIndex = 2;
-            this.treeViewChannel.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.treeViewChannel_AfterCheck);
+            this.treeViewChannel.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.TreeView_AfterCheck);
             // 
             // treeViewDatabase
             // 
@@ -145,7 +145,7 @@ namespace ElementSearch
             this.treeViewDatabase.Name = "treeViewDatabase";
             this.treeViewDatabase.Size = new System.Drawing.Size(326, 224);
             this.treeViewDatabase.TabIndex = 3;
-            this.treeViewDatabase.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.treeViewDatabase_AfterCheck);
+            this.treeViewDatabase.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.TreeView_AfterCheck);
             // 
             // textBoxElementType
             // 
