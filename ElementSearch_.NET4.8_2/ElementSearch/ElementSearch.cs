@@ -81,18 +81,6 @@ namespace ElementSearch
             listViewElements.ListViewItemSorter = listViewColumnSorter;
         }
 
-        private void FillDictionaries(Dictionary<uint, string> dict, List<List<string>> fileTokens)
-        {
-            foreach (var lineTokens in fileTokens)
-            {
-                if (lineTokens.Count < 3)
-                    continue;
-
-                uint.TryParse(lineTokens[0], out uint id);
-                dict[id] = lineTokens[1];
-            }
-        }
-
         private List<List<string>> ReadTextFile(string filePath)
         {
             var fileTokens = new List<List<string>>();
@@ -110,34 +98,45 @@ namespace ElementSearch
             return fileTokens;
         }
 
+        private void FillDictionaries(Dictionary<uint, string> dict, List<List<string>> fileTokens)
+        {
+            foreach (var lineTokens in fileTokens)
+            {
+                if (lineTokens.Count != 2)
+                    continue;
+
+                uint.TryParse(lineTokens[0], out uint id);
+                dict[id] = lineTokens[1];
+            }
+        }
+
         private void FillTreeView(TreeView treeView, List<List<string>> fileTokens)
         {
             var nodeLookup = new Dictionary<string, MyTreeNode>();
 
             foreach (var lineTokens in fileTokens)
             {
-                if (lineTokens.Count < 3)
+                if (lineTokens.Count != 2)
                     continue;
 
                 uint.TryParse(lineTokens[0], out uint id);
-                string family_hierarhy = lineTokens[1];
+                string family_hierarchy = lineTokens[1];
 
-                var relatives = family_hierarhy.Split('/').Select(relative => new MyTreeNode(relative, id)).ToList();
-
-                AddNode(treeView.Nodes, relatives, 0, nodeLookup);
+                var relatives = family_hierarchy.Split('/').ToList();
+                AddNode(treeView.Nodes, relatives, 0, id, nodeLookup);
             }
         }
 
-        private void AddNode(TreeNodeCollection nodes, List<MyTreeNode> family, int index, Dictionary<string, MyTreeNode> nodeLookup)
+        private void AddNode(TreeNodeCollection nodes, List<string> family, int index, uint id, Dictionary<string, MyTreeNode> nodeLookup)
         {
             if (index < family.Count)
             {
-                var currentRelative = family[index];
-                var currentNodeKey = currentRelative.Text;
+                var currentNodeKey = string.Join("/", family.Take(index + 1));
 
                 if (!nodeLookup.TryGetValue(currentNodeKey, out MyTreeNode currentNode))
                 {
-                    currentNode = currentRelative;
+                    // Set the ID only when we reach the last relative in the family
+                    currentNode = new MyTreeNode(family[index], index == family.Count - 1 ? id : 0);
 
                     if (this.InvokeRequired)
                     {
@@ -151,7 +150,7 @@ namespace ElementSearch
                     nodeLookup[currentNodeKey] = currentNode;
                 }
 
-                AddNode(currentNode.Nodes, family, index + 1, nodeLookup);
+                AddNode(currentNode.Nodes, family, index + 1, id, nodeLookup);
             }
         }
 
@@ -173,8 +172,8 @@ namespace ElementSearch
         {
             if (node is MyTreeNode myNode)
             {
-                if (IsLeafNode(node))
-                {
+                //if (IsLeafNode(node))
+                //{
                     if (elementDataById.TryGetValue(myNode._ID, out ElementData element))
                     {
                         if (isChecked)
@@ -186,7 +185,7 @@ namespace ElementSearch
                             RemoveElementFromListView(element.ID);
                         }
                     }
-                }
+                //}
             }
 
             foreach (TreeNode childNode in node.Nodes)

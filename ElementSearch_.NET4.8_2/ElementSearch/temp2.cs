@@ -290,3 +290,95 @@
 //this.label3.Anchor = AnchorStyles.Top | AnchorStyles.Left;
 //this.buttonClear.Anchor = AnchorStyles.Top | AnchorStyles.Left;
 //this.buttonSend.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+
+
+//public partial class ElementSearch : Form
+//{
+//    private Dictionary<uint, string> elementTypeById = new Dictionary<uint, string>();
+//    private void LoadData()
+//    {
+//        string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
+//        string elementTypeFilePath = Path.Combine(projectDirectory, "data", "_lst_LogData_element_type.txt");
+
+//        string[] filesPaths = { elementTypeFilePath };
+
+//        var fileTokens = filesPaths.Select(ReadTextFile).ToArray();
+
+//        FillTreeView(treeViewElementType, fileTokens[0]);
+//        FillDictionary(elementTypeById, fileTokens[0]);
+//    }
+
+//    private List<List<string>> ReadTextFile(string filePath)
+//    {
+//        var fileTokens = new List<List<string>>();
+
+//        using (var reader = new StreamReader(filePath))
+//        {
+//            string line;
+//            while ((line = reader.ReadLine()) != null)
+//            {
+//                var tokens = line.Split('@').Where(token => !string.IsNullOrEmpty(token)).ToList();
+//                fileTokens.Add(tokens);
+//            }
+//        }
+
+//        return fileTokens;
+//    }
+
+//    private void FillDictionary(Dictionary<uint, string> dict, List<List<string>> fileTokens)
+//    {
+//        foreach (var lineTokens in fileTokens)
+//        {
+//            if (lineTokens.Count != 2)
+//                continue;
+
+//            uint.TryParse(lineTokens[0], out uint id);
+//            dict[id] = lineTokens[1];
+//        }
+//    }
+
+//    private void FillTreeView(TreeView treeView, List<List<string>> fileTokens)
+//    {
+//        var nodeLookup = new Dictionary<string, MyTreeNode>();
+
+//        foreach (var lineTokens in fileTokens)
+//        {
+//            if (lineTokens.Count != 2)
+//                continue;
+
+//            uint.TryParse(lineTokens[0], out uint id);
+//            string family_hierarhy = lineTokens[1];
+
+//            var relatives = family_hierarhy.Split('/').Select(relative => new MyTreeNode(relative, id)).ToList();
+
+//            AddNode(treeView.Nodes, relatives, 0, nodeLookup);
+//        }
+//    }
+
+//    private void AddNode(TreeNodeCollection nodes, List<MyTreeNode> family, int index, Dictionary<string, MyTreeNode> nodeLookup)
+//    {
+//        if (index < family.Count)
+//        {
+//            var currentRelative = family[index];
+//            var currentNodeKey = currentRelative.Text;
+
+//            if (!nodeLookup.TryGetValue(currentNodeKey, out MyTreeNode currentNode))
+//            {
+//                currentNode = currentRelative;
+
+//                if (this.InvokeRequired)
+//                {
+//                    this.Invoke(new Action(() => nodes.Add(currentNode)));
+//                }
+//                else
+//                {
+//                    nodes.Add(currentNode);
+//                }
+
+//                nodeLookup[currentNodeKey] = currentNode;
+//            }
+
+//            AddNode(currentNode.Nodes, family, index + 1, nodeLookup);
+//        }
+//    }
+//}
