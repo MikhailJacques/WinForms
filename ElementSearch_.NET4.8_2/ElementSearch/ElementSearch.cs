@@ -18,7 +18,9 @@ namespace ElementSearch
         private Dictionary<uint, string> channelById = new Dictionary<uint, string>();
         private Dictionary<uint, string> databaseById = new Dictionary<uint, string>();
         private Dictionary<uint, ElementData> elementDataById = new Dictionary<uint, ElementData>();
-        private HashSet<string> uniqueElementIDs = new HashSet<string>();
+        private HashSet<uint> uniqueElementIDs = new HashSet<uint>();
+        private List<uint> selectedListViewElements = new List<uint>();
+        private List<uint> unselectedListViewElements = new List<uint>();
 
         public ElementSearch()
         {
@@ -198,7 +200,7 @@ namespace ElementSearch
         {
             if (elementDataById.TryGetValue(nodeId, out ElementData elementData))
             {
-                if (uniqueElementIDs.Add(nodeId.ToString()))
+                if (uniqueElementIDs.Add(nodeId))
                 {
                     ListViewItem listViewItem = new ListViewItem(elementData.ID.ToString());
                     listViewItem.SubItems.Add(elementData.LongName);
@@ -229,7 +231,7 @@ namespace ElementSearch
             if (itemToRemove != null)
             {
                 listViewElements.Items.Remove(itemToRemove);
-                uniqueElementIDs.Remove(id.ToString());
+                uniqueElementIDs.Remove(id);
             }
         }
 
@@ -539,11 +541,15 @@ namespace ElementSearch
         {
             if (checkBoxElements.Checked)
             {
-                // Store the selected items in a temporary list
-                List<string> selectedElementIds = new List<string>();
-                foreach (ListViewItem item in listViewElements.SelectedItems)
+                selectedListViewElements.Clear();
+                unselectedListViewElements.Clear();
+
+                foreach (ListViewItem item in listViewElements.Items)
                 {
-                    selectedElementIds.Add(item.SubItems[0].Text);
+                    if (item.Selected)
+                        selectedListViewElements.Add(uint.Parse(item.SubItems[0].Text));
+                    else
+                        unselectedListViewElements.Add(uint.Parse(item.SubItems[0].Text));
                 }
 
                 // Clear the ListView and HashSet
@@ -551,12 +557,11 @@ namespace ElementSearch
                 uniqueElementIDs.Clear();
 
                 // Add only the selected items back to the ListView and HashSet
-                if (selectedElementIds.Count > 0)
+                if (selectedListViewElements.Count > 0)
                 {
-                    foreach (string selectedElementId in selectedElementIds)
+                    foreach (uint selectedElementId in selectedListViewElements)
                     {
-                        uint nodeId = uint.Parse(selectedElementId);
-                        AddElementToListView(nodeId);
+                        AddElementToListView(selectedElementId);
                     }
                 }
             }
@@ -566,20 +571,14 @@ namespace ElementSearch
                 listViewElements.Items.Clear();
                 uniqueElementIDs.Clear();
 
-                // Restore the ListView to its original state (all items)
-                foreach (TreeNode node in treeViewElementType.Nodes)
+                foreach (uint selectedElementId in selectedListViewElements)
                 {
-                    UpdateListViewForNodeHierarchy(node, true);
+                    AddElementToListView(selectedElementId);
                 }
 
-                foreach (TreeNode node in treeViewChannel.Nodes)
+                foreach (uint unselectedElementId in unselectedListViewElements)
                 {
-                    UpdateListViewForNodeHierarchy(node, true);
-                }
-
-                foreach (TreeNode node in treeViewDatabase.Nodes)
-                {
-                    UpdateListViewForNodeHierarchy(node, true);
+                    AddElementToListView(unselectedElementId);
                 }
             }
         }
