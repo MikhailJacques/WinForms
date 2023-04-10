@@ -114,19 +114,19 @@
 //            this.textBoxElementType.Name = "textBoxElementType";
 //            this.textBoxElementType.Size = new System.Drawing.Size(160, 20);
 //            this.textBoxElementType.TabIndex = 4;
-//            this.textBoxElementType.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxElementType_KeyDown);
+//            this.textBoxElementType.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TextBoxElementType_KeyDown);
 
 //            this.textBoxChannel.Location = new System.Drawing.Point(170, 261);
 //            this.textBoxChannel.Name = "textBoxChannel";
 //            this.textBoxChannel.Size = new System.Drawing.Size(160, 20);
 //            this.textBoxChannel.TabIndex = 5;
-//            this.textBoxChannel.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxChannel_KeyDown);
+//            this.textBoxChannel.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TextBoxChannel_KeyDown);
 
 //            this.textBoxDatabase.Location = new System.Drawing.Point(170, 513);
 //            this.textBoxDatabase.Name = "textBoxDatabase";
 //            this.textBoxDatabase.Size = new System.Drawing.Size(160, 20);
 //            this.textBoxDatabase.TabIndex = 6;
-//            this.textBoxDatabase.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxDatabase_KeyDown);
+//            this.textBoxDatabase.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TextBoxDatabase_KeyDown);
 
 //            this.textBoxElementName.Location = new System.Drawing.Point(366, 12);
 //            this.textBoxElementName.Name = "textBoxElementName";

@@ -705,7 +705,7 @@
 //    }
 //}
 
-//private void textBoxElementType_KeyDown(object sender, KeyEventArgs e)
+//private void TextBoxElementType_KeyDown(object sender, KeyEventArgs e)
 //{
 //    if (e.KeyCode == Keys.Enter)
 //    {
@@ -720,7 +720,7 @@
 //    }
 //}
 
-//private void textBoxChannel_KeyDown(object sender, KeyEventArgs e)
+//private void TextBoxChannel_KeyDown(object sender, KeyEventArgs e)
 //{
 //    if (e.KeyCode == Keys.Enter)
 //    {
@@ -735,7 +735,7 @@
 //    }
 //}
 
-//private void textBoxDatabase_KeyDown(object sender, KeyEventArgs e)
+//private void TextBoxDatabase_KeyDown(object sender, KeyEventArgs e)
 //{
 //    if (e.KeyCode == Keys.Enter)
 //    {

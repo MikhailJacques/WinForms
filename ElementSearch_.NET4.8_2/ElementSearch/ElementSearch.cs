@@ -165,10 +165,10 @@ namespace ElementSearch
             }
         }
 
-        private bool IsLeafNode(TreeNode node)
-        {
-            return node.Nodes.Count == 0;
-        }
+        //private bool IsLeafNode(TreeNode node)
+        //{
+        //    return node.Nodes.Count == 0;
+        //}
 
         private void UpdateListViewForNodeHierarchy(TreeNode node, bool isChecked)
         {
@@ -451,7 +451,7 @@ namespace ElementSearch
             SetTreeViewNodeCheckState(treeViewDatabase.Nodes, checkBoxDatabase.Checked);
         }
 
-        private void textBoxElementType_KeyDown(object sender, KeyEventArgs e)
+        private void TextBoxElementType_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
@@ -469,7 +469,7 @@ namespace ElementSearch
             }
         }
 
-        private void textBoxChannel_KeyDown(object sender, KeyEventArgs e)
+        private void TextBoxChannel_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
@@ -487,7 +487,7 @@ namespace ElementSearch
             }
         }
 
-        private void textBoxDatabase_KeyDown(object sender, KeyEventArgs e)
+        private void TextBoxDatabase_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
@@ -512,7 +512,7 @@ namespace ElementSearch
                 return;
             }
 
-            if (e.Node is MyTreeNode myNode)
+            if (e.Node is MyTreeNode)
             {
                 isTreeViewUpdating = true;
                 UpdateChildNodesCheckedState(e.Node, e.Node.Checked);
@@ -537,11 +537,9 @@ namespace ElementSearch
                         unselectedListViewElements.Add(uint.Parse(item.SubItems[0].Text));
                 }
 
-                // Clear the ListView and HashSet
                 listViewElements.Items.Clear();
                 uniqueElementIDs.Clear();
 
-                // Add only the selected items back to the ListView and HashSet
                 if (selectedListViewElements.Count > 0)
                 {
                     foreach (uint selectedElementId in selectedListViewElements)
@@ -552,7 +550,6 @@ namespace ElementSearch
             }
             else
             {
-                // Clear the ListView and HashSet
                 listViewElements.Items.Clear();
                 uniqueElementIDs.Clear();
 

@@ -38,7 +38,7 @@
 //The buttonClear_Click method clears the TreeViews and the ListView when the "Clear" button is clicked.
 //The buttonSend_Click method is currently empty and marked for later implementation.
 
-//The textBoxElementType_KeyDown, textBoxChannel_KeyDown, and textBoxDatabase_KeyDown methods are event handlers for searching and
+//The TextBoxElementType_KeyDown, TextBoxChannel_KeyDown, and TextBoxDatabase_KeyDown methods are event handlers for searching and
 //checking nodes in the corresponding TreeViews based on the text input. The SearchAndCheckNode method is used to search and check nodes in the TreeViews.
 
 //Overall, the application's purpose is to display, search, and filter data from text files using TreeViews and a ListView.
