@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.IO.Pipes;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml.Linq;
 
 namespace ElementSearch
 {
     public partial class ElementSearch : Form
     {
+        private bool filterSelectedElements = false;
         private bool isClearingTreeView = false;
         private bool isTreeViewUpdating = false;
         private ListViewColumnSorter listViewColumnSorter;
@@ -22,14 +23,15 @@ namespace ElementSearch
         private HashSet<uint> uniqueElementIDs = new HashSet<uint>();
         private List<uint> selectedListViewElements = new List<uint>();
         private List<uint> unselectedListViewElements = new List<uint>();
-        private List<ListViewItem> listViewItems = new List<ListViewItem>();
-
+        private List<ElementData> dataSource = new List<ElementData>();
 
         public ElementSearch()
         {
             InitializeComponent();
             LoadData();
             InitializeSorter();
+
+            listViewElements.VirtualListSize = elementDataById.Count; // Ensure this is set to the correct count
         }
 
         private void LoadData()
@@ -199,29 +201,6 @@ namespace ElementSearch
             }
         }
 
-        private void AddElementToListView(uint nodeId)
-        {
-            if (elementDataById.TryGetValue(nodeId, out ElementData elementData))
-            {
-                if (uniqueElementIDs.Add(nodeId))
-                {
-                    ListViewItem listViewItem = new ListViewItem(elementData.ID.ToString());
-                    listViewItem.SubItems.Add(elementData.LongName);
-                    listViewItem.SubItems.Add(elementData.ShortName);
-                    listViewItem.SubItems.Add(elementTypeById.ContainsKey(elementData.ElementType) ? elementTypeById[elementData.ElementType] : string.Empty);
-                    listViewItem.SubItems.Add(channelById.ContainsKey(elementData.Channel) ? channelById[elementData.Channel] : string.Empty);
-                    listViewItem.SubItems.Add(databaseById.ContainsKey(elementData.Database) ? databaseById[elementData.Database] : string.Empty);
-                    listViewItem.SubItems.Add(elementData.Location);
-                    listViewItem.SubItems.Add(elementData.Handle.ToString());
-
-                    listViewItems.Add(listViewItem);
-
-                    listViewElements.VirtualListSize = listViewItems.Count;
-                }
-            }
-        }
-
-
         //private void AddElementToListView(uint nodeId)
         //{
         //    if (elementDataById.TryGetValue(nodeId, out ElementData elementData))
@@ -236,19 +215,27 @@ namespace ElementSearch
         //            listViewItem.SubItems.Add(databaseById.ContainsKey(elementData.Database) ? databaseById[elementData.Database] : string.Empty);
         //            listViewItem.SubItems.Add(elementData.Location);
         //            listViewItem.SubItems.Add(elementData.Handle.ToString());
-
-        //            listViewElements.BeginUpdate();
         //            listViewElements.Items.Add(listViewItem);
-        //            listViewElements.EndUpdate();
         //        }
         //    }
         //}
+
+        private void AddElementToListView(uint nodeId)
+        {
+            if (elementDataById.TryGetValue(nodeId, out ElementData elementData))
+            {
+                if (uniqueElementIDs.Add(nodeId))
+                {
+                    dataSource.Add(elementData);
+                }
+            }
+        }
 
         private void RemoveElementFromListView(uint id)
         {
             ListViewItem itemToRemove = null;
 
-            foreach (ListViewItem item in listViewItems)
+            foreach (ListViewItem item in listViewElements.Items)
             {
                 if (item.Text == id.ToString())
                 {
@@ -259,49 +246,8 @@ namespace ElementSearch
 
             if (itemToRemove != null)
             {
-                listViewItems.Remove(itemToRemove);
+                listViewElements.Items.Remove(itemToRemove);
                 uniqueElementIDs.Remove(id);
-
-                listViewElements.VirtualListSize = listViewItems.Count;
-            }
-        }
-
-
-        //private void RemoveElementFromListView(uint id)
-        //{
-        //    ListViewItem itemToRemove = null;
-
-        //    foreach (ListViewItem item in listViewElements.Items)
-        //    {
-        //        if (item.Text == id.ToString())
-        //        {
-        //            itemToRemove = item;
-        //            break;
-        //        }
-        //    }
-
-        //    if (itemToRemove != null)
-        //    {
-        //        listViewElements.BeginUpdate();
-        //        listViewElements.Items.Remove(itemToRemove);
-        //        listViewElements.EndUpdate();
-
-        //        uniqueElementIDs.Remove(id);
-        //    }
-        //}
-
-
-        private void SetTreeViewNodeCheckState2(TreeView treeView, bool checkState)
-        {
-            foreach (TreeNode node in treeView.Nodes)
-            {
-                node.Checked = checkState;
-                SetTreeViewNodeCheckState(node.Nodes, checkState);
-            }
-
-            if (checkState == false)
-            {
-                ClearTreeView(treeView);
             }
         }
 
@@ -371,70 +317,6 @@ namespace ElementSearch
                 SearchAndCheckNode(childNode, searchText, check, forceCheck);
             }
         }
-
-        private void textBoxElementName_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {
-                e.Handled = true;
-                e.SuppressKeyPress = true;
-
-                string searchText = textBoxElementName.Text;
-
-                if (searchText.Length >= 3)
-                {
-                    listViewElements.SelectedIndices.Clear();
-
-                    for (int i = 0; i < listViewElements.VirtualListSize; i++)
-                    {
-                        ListViewItem item = listViewElements.Items[i];
-
-                        string longName = item.SubItems[1].Text;
-                        string shortName = item.SubItems[2].Text;
-
-                        if (longName.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0 ||
-                            shortName.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
-                        {
-                            listViewElements.SelectedIndices.Add(i);
-                            listViewElements.EnsureVisible(i);
-                        }
-                    }
-                }
-            }
-        }
-
-
-        //private void textBoxElementName_KeyDown(object sender, KeyEventArgs e)
-        //{
-        //    if (e.KeyCode == Keys.Enter)
-        //    {
-        //        e.Handled = true;
-        //        e.SuppressKeyPress = true;
-
-        //        string searchText = textBoxElementName.Text;
-
-        //        if (searchText.Length >= 3)
-        //        {
-        //            foreach (ListViewItem item in listViewElements.Items)
-        //            {
-        //                item.Selected = false;
-        //            }
-
-        //            foreach (ListViewItem item in listViewElements.Items)
-        //            {
-        //                string longName = item.SubItems[1].Text;
-        //                string shortName = item.SubItems[2].Text;
-
-        //                if (longName.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0 ||
-        //                    shortName.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
-        //                {
-        //                    item.Selected = true;
-        //                    item.EnsureVisible();
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
 
         private void listViewElements_ColumnClick(object sender, ColumnClickEventArgs e)
         {
@@ -509,23 +391,17 @@ namespace ElementSearch
 
         private void checkBoxElementType_CheckedChanged(object sender, EventArgs e)
         {
-            SetTreeViewNodeCheckState2(treeViewElementType, checkBoxElementType.Checked);
-            //SetTreeViewNodeCheckState(treeViewElementType.Nodes, checkBoxElementType.Checked);
-
-            //if (checkBoxElementType.Checked == false)
-            //    ClearTreeView(treeViewElementType);
+            SetTreeViewNodeCheckState(treeViewElementType.Nodes, checkBoxElementType.Checked);
         }
 
         private void checkBoxChannel_CheckedChanged(object sender, EventArgs e)
         {
-            SetTreeViewNodeCheckState2(treeViewChannel, checkBoxChannel.Checked);
-            // SetTreeViewNodeCheckState(treeViewChannel.Nodes, checkBoxChannel.Checked);          
+            SetTreeViewNodeCheckState(treeViewChannel.Nodes, checkBoxChannel.Checked);
         }
 
         private void checkBoxDatabase_CheckedChanged(object sender, EventArgs e)
         {
-            SetTreeViewNodeCheckState2(treeViewDatabase, checkBoxDatabase.Checked);
-            //SetTreeViewNodeCheckState(treeViewDatabase.Nodes, checkBoxDatabase.Checked);
+            SetTreeViewNodeCheckState(treeViewDatabase.Nodes, checkBoxDatabase.Checked);
         }
 
         private void TextBoxElementType_KeyDown(object sender, KeyEventArgs e)
@@ -577,6 +453,38 @@ namespace ElementSearch
                     foreach (TreeNode node in treeViewDatabase.Nodes)
                     {
                         SearchAndCheckNode(node, searchText, true);
+                    }
+                }
+            }
+        }
+
+        private void TextBoxElementName_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+
+                string searchText = textBoxElementName.Text;
+
+                if (searchText.Length >= 3)
+                {
+                    foreach (ListViewItem item in listViewElements.Items)
+                    {
+                        item.Selected = false;
+                    }
+
+                    foreach (ListViewItem item in listViewElements.Items)
+                    {
+                        string longName = item.SubItems[1].Text;
+                        string shortName = item.SubItems[2].Text;
+
+                        if (longName.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0 ||
+                            shortName.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            item.Selected = true;
+                            item.EnsureVisible();
+                        }
                     }
                 }
             }
@@ -642,13 +550,57 @@ namespace ElementSearch
             }
         }
 
-        private void listViewElements_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
+        private void buttonToggleFilter_Click(object sender, EventArgs e)
         {
-            if (e.ItemIndex < listViewItems.Count)
+            filterSelectedElements = !filterSelectedElements;
+            listViewElements.BeginUpdate();
+            ApplyElementFilter();
+            listViewElements.EndUpdate();
+        }
+
+        private void ApplyElementFilter()
+        {
+            foreach (ListViewItem item in listViewElements.Items)
             {
-                e.Item = listViewItems[e.ItemIndex];
+                item.Selected = false;
+                if (filterSelectedElements)
+                {
+                    item.BackColor = Color.LightGray;
+                    item.ForeColor = Color.Black;
+                    if (selectedListViewElements.Contains(uint.Parse(item.SubItems[0].Text)))
+                    {
+                        item.BackColor = SystemColors.Window;
+                        item.ForeColor = SystemColors.WindowText;
+                    }
+                }
+                else
+                {
+                    item.BackColor = SystemColors.Window;
+                    item.ForeColor = SystemColors.WindowText;
+                }
             }
         }
 
+        private void ListViewElements_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
+        {
+            if (e.ItemIndex < 0 || e.ItemIndex >= dataSource.Count)
+            {
+                e.Item = new ListViewItem(); // Return an empty ListViewItem
+                return;
+            }
+
+            ElementData elementData = dataSource[e.ItemIndex];
+
+            ListViewItem item = new ListViewItem(elementData.ID.ToString());
+            item.SubItems.Add(elementData.LongName);
+            item.SubItems.Add(elementData.ShortName);
+            item.SubItems.Add(elementTypeById.ContainsKey(elementData.ElementType) ? elementTypeById[elementData.ElementType] : string.Empty);
+            item.SubItems.Add(channelById.ContainsKey(elementData.Channel) ? channelById[elementData.Channel] : string.Empty);
+            item.SubItems.Add(databaseById.ContainsKey(elementData.Database) ? databaseById[elementData.Database] : string.Empty);
+            item.SubItems.Add(elementData.Location);
+            item.SubItems.Add(elementData.Handle.ToString());
+
+            e.Item = item;
+        }
     }
 }

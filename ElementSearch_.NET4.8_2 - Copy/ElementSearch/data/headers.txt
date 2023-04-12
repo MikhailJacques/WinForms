@@ -1,0 +1,17 @@
+ID | Long Name | Short Name | Elem Type | Channel | Database | Location | Handle
+
+
+ID  | Long Name 	| Short Name 		| Elem Type | Channel 	| Database 	| Location 	| Handle  
+0	@LONG_ELM_0		@SHORT_ELM_0		@0			@0			@0			@aaaaa		@000000000
+1	@LONG_ELM_1		@SHORT_ELM_1		@1			@1			@1			@bbbbb		@111111111
+2	@LONG_ELM_2		@SHORT_ELM_2		@2			@2			@2			@ccccc		@222222222
+3	@LONG_ELM_3		@SHORT_ELM_3		@3			@3			@3			@ddddd		@333333333
+4	@LONG_ELM_4		@SHORT_ELM_4		@4			@4			@4			@eeeee		@444444444
+5	@LONG_ELM_5		@SHORT_ELM_5		@5			@5			@5			@fffff		@555555555
+6	@LONG_ELM_6		@SHORT_ELM_6		@6			@6			@6			@ggggg		@666666666
+7	@LONG_ELM_7		@SHORT_ELM_7		@7			@7			@7			@hhhhh		@777777777
+8	@LONG_ELM_8		@SHORT_ELM_8		@8			@8			@8			@iiiii		@888888888
+9	@LONG_ELM_9		@SHORT_ELM_9		@9			@9			@9			@jjjjj		@999999999
+10	@LONG_ELM_10	@SHORT_ELM_10		@10			@10			@10			@kkkkk		@999999991
+11	@LONG_ELM_11	@SHORT_ELM_11		@11			@11			@11			@hhhhh		@999999992
+12	@LONG_ELM_12	@SHORT_ELM_12		@12			@12			@12			@ggggg		@999999993

@@ -48,6 +48,7 @@ namespace ElementSearch
             this.checkBoxElementType = new System.Windows.Forms.CheckBox();
             this.checkBoxChannel = new System.Windows.Forms.CheckBox();
             this.checkBoxDatabase = new System.Windows.Forms.CheckBox();
+            this.buttonToggleFilter = new System.Windows.Forms.Button();
             this.checkBoxElements = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
@@ -84,9 +85,10 @@ namespace ElementSearch
             this.listViewElements.TabIndex = 1;
             this.listViewElements.UseCompatibleStateImageBehavior = false;
             this.listViewElements.View = System.Windows.Forms.View.Details;
+            this.listViewElements.VirtualListSize = 10000;
             this.listViewElements.VirtualMode = true;
             this.listViewElements.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewElements_ColumnClick);
-            this.listViewElements.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.listViewElements_RetrieveVirtualItem);
+            this.listViewElements.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.ListViewElements_RetrieveVirtualItem);
             // 
             // columnHeaderID
             // 
@@ -179,7 +181,7 @@ namespace ElementSearch
             this.textBoxElementName.Name = "textBoxElementName";
             this.textBoxElementName.Size = new System.Drawing.Size(170, 20);
             this.textBoxElementName.TabIndex = 7;
-            this.textBoxElementName.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxElementName_KeyDown);
+            this.textBoxElementName.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TextBoxElementName_KeyDown);
             // 
             // buttonClear
             // 
@@ -263,13 +265,24 @@ namespace ElementSearch
             this.checkBoxDatabase.UseVisualStyleBackColor = true;
             this.checkBoxDatabase.Click += new System.EventHandler(this.checkBoxDatabase_CheckedChanged);
             // 
+            // buttonToggleFilter
+            // 
+            this.buttonToggleFilter.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.buttonToggleFilter.Location = new System.Drawing.Point(706, 11);
+            this.buttonToggleFilter.Name = "buttonToggleFilter";
+            this.buttonToggleFilter.Size = new System.Drawing.Size(76, 21);
+            this.buttonToggleFilter.TabIndex = 25;
+            this.buttonToggleFilter.Text = "Toggle Filter";
+            this.buttonToggleFilter.UseVisualStyleBackColor = true;
+            this.buttonToggleFilter.Click += new System.EventHandler(this.buttonToggleFilter_Click);
+            // 
             // checkBoxElements
             // 
             this.checkBoxElements.AutoSize = true;
-            this.checkBoxElements.Location = new System.Drawing.Point(345, 16);
+            this.checkBoxElements.Location = new System.Drawing.Point(345, 15);
             this.checkBoxElements.Name = "checkBoxElements";
             this.checkBoxElements.Size = new System.Drawing.Size(15, 14);
-            this.checkBoxElements.TabIndex = 25;
+            this.checkBoxElements.TabIndex = 26;
             this.checkBoxElements.UseVisualStyleBackColor = true;
             this.checkBoxElements.CheckedChanged += new System.EventHandler(this.checkBoxElements_CheckedChanged);
             // 
@@ -279,6 +292,7 @@ namespace ElementSearch
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1328, 767);
             this.Controls.Add(this.checkBoxElements);
+            this.Controls.Add(this.buttonToggleFilter);
             this.Controls.Add(this.checkBoxDatabase);
             this.Controls.Add(this.checkBoxChannel);
             this.Controls.Add(this.checkBoxElementType);
@@ -328,6 +342,7 @@ namespace ElementSearch
         private CheckBox checkBoxElementType;
         private CheckBox checkBoxChannel;
         private CheckBox checkBoxDatabase;
+        private Button buttonToggleFilter;
         private CheckBox checkBoxElements;
     }
 }
