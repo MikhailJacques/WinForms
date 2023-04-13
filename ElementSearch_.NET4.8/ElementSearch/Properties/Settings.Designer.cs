@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ElementSearch3.Properties
+namespace ElementSearch.Properties
 {
 
 

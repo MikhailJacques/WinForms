@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System;
 using System.Windows.Forms;
 
 namespace ElementSearch
@@ -13,7 +10,7 @@ namespace ElementSearch
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new ElementSearch());
+            Application.Run(new FormElementSearch());
         }
     }
 }

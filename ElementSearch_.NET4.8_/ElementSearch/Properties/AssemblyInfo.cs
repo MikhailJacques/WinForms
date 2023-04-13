@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ElementSearch")]
+[assembly: AssemblyTitle("ElementSearch3")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("IAI")]
-[assembly: AssemblyProduct("ElementSearch")]
+[assembly: AssemblyProduct("ElementSearch3")]
 [assembly: AssemblyCopyright("Copyright © IAI 2023")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("91e2c33c-cc57-49be-aa66-e90324633123")]
+[assembly: Guid("1ce5c9d4-a627-47b0-9129-0033af7e8fb7")]
 
 // Version information for an assembly consists of the following four values:
 //

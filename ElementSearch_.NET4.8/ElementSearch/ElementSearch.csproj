@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{1CE5C9D4-A627-47B0-9129-0033AF7E8FB7}</ProjectGuid>
+    <ProjectGuid>{91E2C33C-CC57-49BE-AA66-E90324633123}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>ElementSearch</RootNamespace>
     <AssemblyName>ElementSearch</AssemblyName>
@@ -54,12 +54,12 @@
     <Compile Include="ElementSearch.Designer.cs">
       <DependentUpon>ElementSearch.cs</DependentUpon>
     </Compile>
-    <Compile Include="ElementTypeContainer.cs" />
-    <Compile Include="ElementTypeData.cs" />
+    <Compile Include="ListViewColumnSorter.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="MyTreeNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Temp.cs" />
+    <Compile Include="temp.cs" />
+    <Compile Include="temp2.cs" />
     <EmbeddedResource Include="ElementSearch.resx">
       <DependentUpon>ElementSearch.cs</DependentUpon>
     </EmbeddedResource>
