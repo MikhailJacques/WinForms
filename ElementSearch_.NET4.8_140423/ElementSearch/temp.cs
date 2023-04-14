@@ -246,21 +246,21 @@
 //            if (node.Checked)
 //            {
 //                // Find the element data in the collection based on the node's ID
-//                ElementData elementData = elementById.FirstOrDefault(el => el.Value.ID == nodeId).Value;
+//                ElementData element = elementById.FirstOrDefault(el => el.Value.ID == nodeId).Value;
 
-//                if (elementData != null)
+//                if (element != null)
 //                {
 //                    // Add element data to the ListView control
 //                    ListViewItem listViewItem = new ListViewItem(new string[]
 //                    {
-//                        elementData.ID.ToString(),
-//                        elementData.LongName,
-//                        elementData.ShortName,
-//                        elementData.Type,
-//                        elementData.Channel,
-//                        elementData.Database,
-//                        elementData.Location,
-//                        elementData.Handle.ToString()
+//                        element.ID.ToString(),
+//                        element.LongName,
+//                        element.ShortName,
+//                        element.Type,
+//                        element.Channel,
+//                        element.Database,
+//                        element.Location,
+//                        element.Handle.ToString()
 //                    });
 //                    listViewElements.Items.Add(listViewItem);
 //                }
@@ -531,16 +531,16 @@
 
 //private void AddNodeDataToListView(uint nodeId)
 //{
-//    if (elementById.TryGetValue(nodeId, out ElementData elementData))
+//    if (elementById.TryGetValue(nodeId, out ElementData element))
 //    {
-//        ListViewItem listViewItem = new ListViewItem(elementData.ID.ToString());
-//        listViewItem.SubItems.Add(elementData.LongName);
-//        listViewItem.SubItems.Add(elementData.ShortName);
-//        listViewItem.SubItems.Add(typeById.ContainsKey(elementData.Type) ? typeById[elementData.Type] : string.Empty);
-//        listViewItem.SubItems.Add(channelById.ContainsKey(elementData.Channel) ? channelById[elementData.Channel] : string.Empty);
-//        listViewItem.SubItems.Add(databaseById.ContainsKey(elementData.Database) ? databaseById[elementData.Database] : string.Empty);
-//        listViewItem.SubItems.Add(elementData.Location);
-//        listViewItem.SubItems.Add(elementData.Handle.ToString());
+//        ListViewItem listViewItem = new ListViewItem(element.ID.ToString());
+//        listViewItem.SubItems.Add(element.LongName);
+//        listViewItem.SubItems.Add(element.ShortName);
+//        listViewItem.SubItems.Add(typeById.ContainsKey(element.Type) ? typeById[element.Type] : string.Empty);
+//        listViewItem.SubItems.Add(channelById.ContainsKey(element.Channel) ? channelById[element.Channel] : string.Empty);
+//        listViewItem.SubItems.Add(databaseById.ContainsKey(element.Database) ? databaseById[element.Database] : string.Empty);
+//        listViewItem.SubItems.Add(element.Location);
+//        listViewItem.SubItems.Add(element.Handle.ToString());
 //        listViewElements.Items.Add(listViewItem);
 //    }
 //}
@@ -667,19 +667,19 @@
 
 //private void AddNodeDataToListView(uint nodeId)
 //{
-//    //if (elementById.TryGetValue(nodeId, out ElementData elementData) && !ItemWithIDExists(nodeId))
-//    if (elementById.TryGetValue(nodeId, out ElementData elementData))
+//    //if (elementById.TryGetValue(nodeId, out ElementData element) && !ItemWithIDExists(nodeId))
+//    if (elementById.TryGetValue(nodeId, out ElementData element))
 //    {
 //        if (uniqueElementIds.Add(nodeId.ToString()))
 //        {
-//            ListViewItem listViewItem = new ListViewItem(elementData.ID.ToString());
-//            listViewItem.SubItems.Add(elementData.LongName);
-//            listViewItem.SubItems.Add(elementData.ShortName);
-//            listViewItem.SubItems.Add(typeById.ContainsKey(elementData.Type) ? typeById[elementData.Type] : string.Empty);
-//            listViewItem.SubItems.Add(channelById.ContainsKey(elementData.Channel) ? channelById[elementData.Channel] : string.Empty);
-//            listViewItem.SubItems.Add(databaseById.ContainsKey(elementData.Database) ? databaseById[elementData.Database] : string.Empty);
-//            listViewItem.SubItems.Add(elementData.Location);
-//            listViewItem.SubItems.Add(elementData.Handle.ToString());
+//            ListViewItem listViewItem = new ListViewItem(element.ID.ToString());
+//            listViewItem.SubItems.Add(element.LongName);
+//            listViewItem.SubItems.Add(element.ShortName);
+//            listViewItem.SubItems.Add(typeById.ContainsKey(element.Type) ? typeById[element.Type] : string.Empty);
+//            listViewItem.SubItems.Add(channelById.ContainsKey(element.Channel) ? channelById[element.Channel] : string.Empty);
+//            listViewItem.SubItems.Add(databaseById.ContainsKey(element.Database) ? databaseById[element.Database] : string.Empty);
+//            listViewItem.SubItems.Add(element.Location);
+//            listViewItem.SubItems.Add(element.Handle.ToString());
 //            listViewElements.Items.Add(listViewItem);
 //        }
 //    }

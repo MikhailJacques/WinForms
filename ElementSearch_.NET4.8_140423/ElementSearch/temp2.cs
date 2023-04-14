@@ -399,7 +399,7 @@
 //        }
 
 //        listViewElements.Items.Clear();
-//        uniqueElementIDs.Clear();
+//        listViewItemIds.Clear();
 
 //        if (selectedListViewElements.Count > 0)
 //        {
@@ -412,7 +412,7 @@
 //    else
 //    {
 //        listViewElements.Items.Clear();
-//        uniqueElementIDs.Clear();
+//        listViewItemIds.Clear();
 
 //        foreach (uint selectedElementId in selectedListViewElements)
 //        {
@@ -428,18 +428,18 @@
 
 //private void AddElementToListView(uint nodeId)
 //{
-//    if (elementById.TryGetValue(nodeId, out Element elementData))
+//    if (elementById.TryGetValue(nodeId, out Element element))
 //    {
-//        if (uniqueElementIDs.Add(nodeId))
+//        if (listViewItemIds.Add(nodeId))
 //        {
-//            ListViewItem listViewItem = new ListViewItem(elementData.ID.ToString());
-//            listViewItem.SubItems.Add(elementData.LongName);
-//            listViewItem.SubItems.Add(elementData.ShortName);
-//            listViewItem.SubItems.Add(typeById.ContainsKey(elementData.Type) ? typeById[elementData.Type] : string.Empty);
-//            listViewItem.SubItems.Add(channelById.ContainsKey(elementData.Channel) ? channelById[elementData.Channel] : string.Empty);
-//            listViewItem.SubItems.Add(databaseById.ContainsKey(elementData.Database) ? databaseById[elementData.Database] : string.Empty);
-//            listViewItem.SubItems.Add(elementData.Location);
-//            listViewItem.SubItems.Add(elementData.Handle.ToString());
+//            ListViewItem listViewItem = new ListViewItem(element.ID.ToString());
+//            listViewItem.SubItems.Add(element.LongName);
+//            listViewItem.SubItems.Add(element.ShortName);
+//            listViewItem.SubItems.Add(typeById.ContainsKey(element.Type) ? typeById[element.Type] : string.Empty);
+//            listViewItem.SubItems.Add(channelById.ContainsKey(element.Channel) ? channelById[element.Channel] : string.Empty);
+//            listViewItem.SubItems.Add(databaseById.ContainsKey(element.Database) ? databaseById[element.Database] : string.Empty);
+//            listViewItem.SubItems.Add(element.Location);
+//            listViewItem.SubItems.Add(element.Handle.ToString());
 //            listViewElements.Items.Add(listViewItem);
 //        }
 //    }
@@ -461,7 +461,7 @@
 //    if (itemToRemove != null)
 //    {
 //        listViewElements.Items.Remove(itemToRemove);
-//        uniqueElementIDs.Remove(id);
+//        listViewItemIds.Remove(id);
 //    }
 //}
 
@@ -538,7 +538,7 @@
 //{
 //    bool showSelectedOnly = checkBoxElements.Checked;
 
-//    foreach (ListViewItem item in listViewItemsById.Values)
+//    foreach (ListViewItem item in listViewItemById.Values)
 //    {
 //        item.SetVisible(!showSelectedOnly || item.Selected);
 //    }
