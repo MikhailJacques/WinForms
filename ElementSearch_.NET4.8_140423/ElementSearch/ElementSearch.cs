@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+//using TreeView = System.Windows.Forms.TreeView;
 
 namespace ElementSearch
 {
@@ -255,26 +256,55 @@ namespace ElementSearch
 
         private void ClearTreeView(TreeView treeView)
         {
+            isTreeViewClearing = true;
+
+            Stack<TreeNode> nodesToProcess = new Stack<TreeNode>();
+
             foreach (TreeNode node in treeView.Nodes)
             {
-                UncheckAndCollapseNodes(node);
+                nodesToProcess.Push(node);
             }
 
-            treeView.CollapseAll();
-        }
-
-        private void UncheckAndCollapseNodes(TreeNode parentNode)
-        {
-            isTreeViewClearing = true;
-            parentNode.Checked = false;
-            parentNode.Collapse();
-            isTreeViewClearing = false;
-
-            foreach (TreeNode childNode in parentNode.Nodes)
+            while (nodesToProcess.Count > 0)
             {
-                UncheckAndCollapseNodes(childNode);
+                TreeNode currentNode = nodesToProcess.Pop();
+                currentNode.Checked = false;
+                currentNode.Collapse();
+
+                foreach (TreeNode childNode in currentNode.Nodes)
+                {
+                    nodesToProcess.Push(childNode);
+                }
             }
+
+            isTreeViewClearing = false;
         }
+
+        //private void ClearTreeView(TreeView treeView)
+        //{
+        //    foreach (TreeNode node in treeView.Nodes)
+        //    {
+        //        UncheckAndCollapseNodes(node);
+        //    }
+        //}
+
+        //private void UncheckAndCollapseNodes(TreeNode parentNode)
+        //{
+        //    isTreeViewClearing = true;
+        //    parentNode.Checked = false;
+        //    parentNode.Collapse();
+        //    isTreeViewClearing = false;
+
+        //    foreach (TreeNode childNode in parentNode.Nodes)
+        //    {
+        //        UncheckAndCollapseNodes(childNode);
+        //    }
+        //}
+
+        //private void ClearTreeView(TreeView treeView)
+        //{
+        //    treeView.CollapseAll();
+        //}
 
         private void SearchAndCheckNode(TreeNode node, string searchText, bool check, bool forceCheck = false)
         {
@@ -393,15 +423,27 @@ namespace ElementSearch
 
         private void ButtonClear_Click(object sender, EventArgs e)
         {
-            textBoxType.Clear();
-            textBoxChannel.Clear();
-            textBoxDatabase.Clear();
-            textBoxElementName.Clear();
+            //textBoxType.Clear();
+            //textBoxChannel.Clear();
+            //textBoxDatabase.Clear();
+            //textBoxElementName.Clear();
 
-            checkBoxType.Checked = false;
-            checkBoxChannel.Checked = false;
-            checkBoxDatabase.Checked = false;
-            checkBoxElements.Checked = false;
+            //checkBoxType.Checked = false;
+            //checkBoxChannel.Checked = false;
+            //checkBoxDatabase.Checked = false;
+            //checkBoxElements.Checked = false;
+
+            foreach (Control control in this.Controls)
+            {
+                if (control is TextBox textBox)
+                {
+                    textBox.Clear();
+                }
+                else if (control is CheckBox checkBox)
+                {
+                    checkBox.Checked = false;
+                }
+            }
 
             listViewItemIds.Clear();
             listViewElements.Items.Clear();
