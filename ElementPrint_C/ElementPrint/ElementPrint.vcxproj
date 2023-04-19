@@ -128,8 +128,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main_single_thread.cpp" />
-    <ClCompile Include="main_multithreaded.cpp" />
+    <ClCompile Include="pipe_single_thread.cpp" />
+    <ClCompile Include="pipe_multi_thread.cpp" />
+    <ClCompile Include="create_process1.cpp" />
+    <ClCompile Include="create_process2.cpp" />
+    <ClCompile Include="create_process3.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
