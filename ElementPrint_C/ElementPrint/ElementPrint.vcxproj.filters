@@ -30,5 +30,11 @@
     <ClCompile Include="create_process3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="pipe_non_blocking.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="pipe_asynchronous.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
