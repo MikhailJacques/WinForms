@@ -2,9 +2,9 @@
 //#include <windows.h>
 //
 //#define BUFFER_SIZE 256
+//char rx_data_buffer[BUFFER_SIZE];
 //
 //HANDLE hMutex;
-//char rx_data_buffer[BUFFER_SIZE];
 //BOOL bDataAvailable;
 //
 //DWORD WINAPI ReadThread(LPVOID lpParam)

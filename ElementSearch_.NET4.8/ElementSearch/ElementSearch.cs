@@ -26,7 +26,6 @@ namespace ElementSearch
         private List<ListViewItem> listViewItemAll = new List<ListViewItem>();
         private HashSet<uint> listViewItemIds = new HashSet<uint>();
 
-
         public ElementSearch()
         {
             InitializeComponent();

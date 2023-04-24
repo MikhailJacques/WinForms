@@ -129,6 +129,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="pipe_asynchronous.cpp" />
+    <ClCompile Include="pipe_message_based.cpp" />
     <ClCompile Include="pipe_non_blocking.cpp" />
     <ClCompile Include="pipe_single_thread.cpp" />
     <ClCompile Include="pipe_multi_thread.cpp" />
