@@ -2,7 +2,10 @@
 #include <windows.h>
 
 #define BUFFER_SIZE 256
+#define WM_RX_DATA_AVAILABLE (WM_USER + 1)
+
 char rx_data_buffer[BUFFER_SIZE];
+HWND hWnd;
 
 HANDLE hMutex;
 BOOL bDataAvailable;
@@ -15,7 +18,7 @@ DWORD WINAPI ReadThread(LPVOID lpParam)
     while (true)
     {
         pipe = CreateNamedPipe(
-            L"\\\\.\\pipe\\Pipe_Element_ID", // Use the wide string literal
+            L"\\\\.\\pipe\\Pipe_Element_ID",
             PIPE_ACCESS_INBOUND,
             PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_WAIT,
             PIPE_UNLIMITED_INSTANCES,
@@ -54,6 +57,9 @@ DWORD WINAPI ReadThread(LPVOID lpParam)
         bDataAvailable = TRUE;
         ReleaseMutex(hMutex);
 
+        // Post a custom message to the main UI thread when new data is available
+        PostMessage(hWnd, WM_RX_DATA_AVAILABLE, 0, 0);
+
         FlushFileBuffers(pipe);
         DisconnectNamedPipe(pipe);
         CloseHandle(pipe);
@@ -62,10 +68,12 @@ DWORD WINAPI ReadThread(LPVOID lpParam)
     return 0;
 }
 
-DWORD WINAPI PrintThread(LPVOID lpParam)
+// Implement this function in your main UI thread to handle WM_RX_DATA_AVAILABLE messages
+LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    while (true)
+    switch (message)
     {
+    case WM_RX_DATA_AVAILABLE:
         WaitForSingleObject(hMutex, INFINITE);
         if (bDataAvailable)
         {
@@ -73,8 +81,12 @@ DWORD WINAPI PrintThread(LPVOID lpParam)
             bDataAvailable = FALSE;
         }
         ReleaseMutex(hMutex);
+        break;
 
-        Sleep(100); // wait for a short period before checking again
+        // ... other case statements for handling other messages ...
+
+    default:
+        return DefWindowProc(hWnd, message, wParam, lParam);
     }
 
     return 0;
@@ -82,6 +94,9 @@ DWORD WINAPI PrintThread(LPVOID lpParam)
 
 int main()
 {
+    // Initialize hWnd with the handle to the main window of your application
+    // ...
+
     hMutex = CreateMutex(NULL, FALSE, NULL);
     if (hMutex == NULL)
     {
@@ -99,21 +114,18 @@ int main()
         return 1;
     }
 
-    HANDLE hPrintThread = CreateThread(NULL, 0, PrintThread, NULL, 0, NULL);
-    if (hPrintThread == NULL)
+    // ... add standard message loop for the main UI thread ...
+    MSG msg;
+    while (GetMessage(&msg, NULL, 0, 0))
     {
-        printf("Error creating print thread: %d\n", GetLastError());
-        CloseHandle(hMutex);
-        CloseHandle(hReadThread);
-        return 1;
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
     }
 
     WaitForSingleObject(hReadThread, INFINITE);
-    WaitForSingleObject(hPrintThread, INFINITE);
 
     CloseHandle(hMutex);
     CloseHandle(hReadThread);
-    CloseHandle(hPrintThread);
 
     return 0;
 }
